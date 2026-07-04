@@ -25,13 +25,22 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-3. Apply the migration in `supabase/migrations/20260611000000_initial_schema.sql` to your Supabase project.
+3. Apply every migration in `supabase/migrations/` to your Supabase project, in filename (timestamp) order.
 
 4. Run the app:
 
 ```bash
 npm run dev
 ```
+
+5. Checks:
+
+```bash
+npm run typecheck
+npm test
+```
+
+See `AGENTS.md` for the current project status, prioritized backlog, and working rules for coding agents.
 
 ## MVP Flow
 
