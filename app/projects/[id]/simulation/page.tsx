@@ -2,7 +2,13 @@ import { LEGAL_DISCLAIMER } from "@/components/legal-footer";
 import { ProjectNav } from "@/components/nav";
 import { PageShell, Panel, StatusBadge } from "@/components/ui";
 import { createClient } from "@/lib/supabase/server";
-import { calculateDiscussionWeights, contributionPoints, formatPercent, categoryWeightMap } from "@/lib/scoring";
+import {
+  calculateDiscussionWeights,
+  contributionPoints,
+  formatPercent,
+  categoryWeightMap,
+  supersededIds
+} from "@/lib/scoring";
 import type { CategoryWeight, Contribution } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +27,7 @@ export default async function SimulationPage({ params }: { params: Promise<{ id:
     (categoryWeights ?? []) as CategoryWeight[]
   );
   const weights = categoryWeightMap((categoryWeights ?? []) as CategoryWeight[]);
+  const superseded = supersededIds((contributions ?? []) as Contribution[]);
 
   return (
     <PageShell title="Non-Binding Simulation" eyebrow={project?.name}>
@@ -72,16 +79,27 @@ export default async function SimulationPage({ params }: { params: Promise<{ id:
                 </tr>
               </thead>
               <tbody>
-                {((contributions ?? []) as Contribution[]).map((contribution) => (
-                  <tr key={contribution.id} className="border-b border-line">
-                    <td className="py-3 pr-3">{contribution.description}</td>
-                    <td className="py-3 pr-3">
-                      <StatusBadge status={contribution.status} sample={contribution.is_demo} />
-                    </td>
-                    <td className="py-3 pr-3">{contribution.final_impact ?? "n/a"}</td>
-                    <td className="py-3 pr-3">{contributionPoints(contribution, weights).toFixed(1)}</td>
-                  </tr>
-                ))}
+                {((contributions ?? []) as Contribution[]).map((contribution) => {
+                  const isSuperseded = superseded.has(contribution.id);
+                  return (
+                    <tr
+                      key={contribution.id}
+                      className={`border-b border-line ${isSuperseded ? "text-muted line-through decoration-gray-400" : ""}`}
+                    >
+                      <td className="py-3 pr-3">{contribution.description}</td>
+                      <td className="py-3 pr-3">
+                        <StatusBadge
+                          status={isSuperseded ? "superseded" : contribution.status}
+                          sample={contribution.is_demo}
+                        />
+                      </td>
+                      <td className="py-3 pr-3">{contribution.final_impact ?? "n/a"}</td>
+                      <td className="py-3 pr-3">
+                        {isSuperseded ? "0.0" : contributionPoints(contribution, weights).toFixed(1)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -28,14 +28,30 @@ export type ContributorScore = {
   contributions: number;
 };
 
+export function supersededIds(contributions: Contribution[]): Set<string> {
+  const ids = new Set<string>();
+  for (const contribution of contributions) {
+    if (
+      contribution.supersedes_id &&
+      (contribution.status === "confirmed" || contribution.status === "partial")
+    ) {
+      ids.add(contribution.supersedes_id);
+    }
+  }
+  return ids;
+}
+
 export function calculateDiscussionWeights(
   contributions: Contribution[],
   categoryWeights: CategoryWeight[]
 ): ContributorScore[] {
   const weights = categoryWeightMap(categoryWeights);
+  const superseded = supersededIds(contributions);
   const grouped = new Map<string, { label: string; byMilestone: Map<string, number[]> }>();
 
   for (const contribution of contributions) {
+    if (superseded.has(contribution.id)) continue;
+
     const rawPoints = contributionPoints(contribution, weights);
     if (rawPoints <= 0) continue;
 
