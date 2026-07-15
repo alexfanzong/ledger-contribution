@@ -8,6 +8,7 @@ type DisplayAssessment = Pick<
   PmAssessmentResult,
   "decision" | "policy_version" | "checks" | "summary"
 > & {
+  uncertainty?: string | null
   input_fingerprint?: string
   evaluated_at?: string
 }
@@ -56,6 +57,12 @@ export function PmAgentVerification({
       </div>
 
       <p>{verification.summary}</p>
+      {verification.uncertainty ? (
+        <div className="rounded-md border border-current/20 bg-white/70 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide">Recorded uncertainty</p>
+          <p className="mt-1 text-sm">{verification.uncertainty}</p>
+        </div>
+      ) : null}
       <p className="text-xs opacity-80">
         PM Agent checked whether the selected evidence supports progress. A teammate must still
         confirm who contributed and the final impact.

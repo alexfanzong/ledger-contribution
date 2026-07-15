@@ -88,6 +88,7 @@ export type ContributionAgentVerification = {
     explanation: string;
   }>;
   summary: string;
+  uncertainty: string | null;
   input_fingerprint: string;
   evaluated_at: string;
 };

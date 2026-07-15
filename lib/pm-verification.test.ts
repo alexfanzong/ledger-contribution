@@ -54,15 +54,13 @@ describe("assessPmClaim", () => {
     ).toBe("insufficient_evidence")
   })
 
-  it("does not let confidence replace missing evidence", () => {
+  it("treats ASCII whitespace-only uncertainty as clear", () => {
     expect(
       assessPmClaim({
-        category: "product",
-        evidenceRefs: [],
-        evidence: [],
-        confidence: 1,
+        ...passingCodeInput,
+        uncertainty: " \t\n\r ",
       }).decision
-    ).toBe("insufficient_evidence")
+    ).toBe("agent_verified")
   })
 
   it("treats prompt-like evidence summaries as inert text", () => {

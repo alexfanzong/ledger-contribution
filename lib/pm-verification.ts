@@ -31,7 +31,6 @@ export type PmAssessmentInput = {
     summary?: string
   }>
   uncertainty?: string
-  confidence?: number
 }
 
 export type PmDecisionPresentation = {
@@ -75,7 +74,8 @@ export function assessPmClaim(input: PmAssessmentInput): PmAssessmentResult {
   const hasEvidence = input.evidenceRefs.length > 0 && selectedEvidence.length > 0
   const referencesResolved =
     input.evidenceRefs.length > 0 && selectedEvidence.length === input.evidenceRefs.length
-  const uncertaintyClear = !input.uncertainty?.trim()
+  const uncertaintyClear =
+    input.uncertainty === undefined || /^[ \t\n\r]*$/.test(input.uncertainty)
   const verificationEvidenceSatisfied =
     input.category !== "code" || selectedEvidence.some((item) => item.kind === "test")
 

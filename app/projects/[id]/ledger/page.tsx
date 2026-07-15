@@ -5,6 +5,7 @@ import { ImportedEvidence } from "@/components/imported-evidence";
 import { PmAgentVerification } from "@/components/pm-agent-verification";
 import { ActionNotice, Field, inputClass, PageShell, Panel, StatusBadge } from "@/components/ui";
 import { readPmAgentVerification } from "@/lib/pm-verification-record";
+import { supersededIds } from "@/lib/scoring";
 import { createClient } from "@/lib/supabase/server";
 import type { Agent, Contribution, ContributionAgentVerification, Member, Milestone } from "@/lib/types";
 import { CONTRIBUTION_CATEGORIES, IMPACTS } from "@/lib/types";
@@ -46,6 +47,8 @@ export default async function LedgerPage({
       latestVerificationByContribution.set(verification.contribution_id, verification);
     }
   }
+  const contributionRows = (contributions ?? []) as Contribution[];
+  const supersededContributionIds = supersededIds(contributionRows);
 
   return (
     <PageShell title="Contribution ledger" eyebrow={project?.name}>
@@ -107,7 +110,7 @@ export default async function LedgerPage({
             <Field label="Supersedes record">
               <select className={inputClass} name="supersedes_id" defaultValue="">
                 <option value="">New record</option>
-                {(contributions as Contribution[] | null)
+                {contributionRows
                   ?.filter((contribution) => contribution.status !== "pending_review")
                   .map((contribution) => (
                     <option key={contribution.id} value={contribution.id}>
@@ -146,12 +149,8 @@ export default async function LedgerPage({
                 </tr>
               </thead>
               <tbody>
-                {(contributions as Contribution[] | null)?.map((contribution) => {
-                  const superseded = Boolean(
-                    (contributions as Contribution[] | null)?.some(
-                      (candidate) => candidate.supersedes_id === contribution.id
-                    )
-                  );
+                {contributionRows.map((contribution) => {
+                  const superseded = supersededContributionIds.has(contribution.id);
                   return (
                     <tr
                       key={contribution.id}
