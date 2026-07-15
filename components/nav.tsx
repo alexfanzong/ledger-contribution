@@ -8,6 +8,7 @@ export function ProjectNav({ projectId }: { projectId: string }) {
     ["Members", `/projects/${projectId}/members`],
     ["Milestones", `/projects/${projectId}/milestones`],
     ["Ledger", `/projects/${projectId}/ledger`],
+    ["Import pack", `/projects/${projectId}/import`],
     ["Peer confirmation", `/projects/${projectId}/review`],
     ["Simulation", `/projects/${projectId}/simulation`]
   ];

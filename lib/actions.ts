@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { parseContributionPackText } from "@/lib/imports/validate";
+import { prepareContributionClaimImport } from "@/lib/imports/prepare";
 import type { ContributionStatus, Impact } from "@/lib/types";
 
 function requiredString(formData: FormData, key: string) {
@@ -233,4 +235,90 @@ export async function reviewContribution(formData: FormData) {
   revalidatePath(`/projects/${projectId}/ledger`);
   revalidatePath(`/projects/${projectId}/review`);
   revalidatePath(`/projects/${projectId}/simulation`);
+}
+
+export async function importContributionPackClaim(formData: FormData) {
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) redirect("/auth");
+
+  const projectId = requiredString(formData, "project_id");
+  const packText = requiredString(formData, "pack_json");
+  const claimId = requiredString(formData, "claim_id");
+  const category = requiredString(formData, "category");
+  const description = requiredString(formData, "description");
+  const proposedImpact = requiredString(formData, "proposed_impact");
+  const milestoneId = optionalString(formData, "milestone_id");
+  const returnPath = `/projects/${projectId}/import`;
+
+  const parsedPack = parseContributionPackText(packText);
+  if (!parsedPack.success) {
+    redirect(`${returnPath}?error=${encodeURIComponent("Contribution Pack is invalid or too large.")}`);
+  }
+
+  const [{ data: project }, { data: currentMember }, { data: ownedAgents }] = await Promise.all([
+    supabase.from("projects").select("id, name").eq("id", projectId).single(),
+    supabase
+      .from("project_members")
+      .select("id, display_name")
+      .eq("project_id", projectId)
+      .eq("profile_id", userData.user.id)
+      .eq("is_demo", false)
+      .single(),
+    supabase
+      .from("agent_registry")
+      .select("id, name, owner_member_id")
+      .eq("project_id", projectId)
+  ]);
+
+  if (!project || !currentMember) {
+    redirect(`${returnPath}?error=${encodeURIComponent("Current user is not a project member.")}`);
+  }
+
+  const prepared = prepareContributionClaimImport({
+    pack: parsedPack.data,
+    actor: {
+      project,
+      member: currentMember,
+      owned_agents: (ownedAgents ?? [])
+        .filter((agent) => agent.owner_member_id === currentMember.id)
+        .map((agent) => ({ id: agent.id, name: agent.name })),
+    },
+    claimId,
+    edits: {
+      category,
+      description,
+      proposedImpact,
+      milestoneId,
+    },
+  });
+
+  if (!prepared.success) {
+    redirect(`${returnPath}?error=${encodeURIComponent("This claim cannot be imported for the current member.")}`);
+  }
+
+  const { error } = await supabase.rpc("import_contribution_pack_claim", {
+    p_project_id: prepared.data.project_id,
+    p_pack: prepared.data.pack,
+    p_claim_id: prepared.data.claim_id,
+    p_category: prepared.data.category,
+    p_description: prepared.data.description,
+    p_proposed_impact: prepared.data.proposed_impact,
+    p_milestone_id: prepared.data.milestone_id,
+    p_contributor_agent_id: prepared.data.contributor_agent_id,
+  } as never);
+
+  if (error) {
+    const safeMessage = error.message.includes("IDENTITY_CONFLICT")
+      ? "This pack claim was already imported with different content. Create a new pack id or claim id."
+      : "Import failed. No contribution was created.";
+    redirect(`${returnPath}?error=${encodeURIComponent(safeMessage)}`);
+  }
+
+  revalidatePath(`/projects/${projectId}/import`);
+  revalidatePath(`/projects/${projectId}/ledger`);
+  revalidatePath(`/projects/${projectId}/review`);
+  redirect(
+    `${returnPath}?message=${encodeURIComponent("Claim submitted for peer confirmation.")}`
+  );
 }
