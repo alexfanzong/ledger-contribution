@@ -14,6 +14,7 @@ Latest real-stack validation notes:
 ```bash
 npm run typecheck
 npm run build
+npm test
 ```
 
 ## Product Flow
@@ -30,6 +31,18 @@ npm run build
 - The simulation page includes the confirmed record in Non-Binding Discussion Weight.
 - Records without a milestone are grouped into one no-milestone bucket for diminishing returns.
 
+## Codex Contribution Pack Flow
+
+- Invoke `$ledger-contribution-pack` with a bounded set of repository evidence.
+- Verify the generated JSON with `.agents/skills/ledger-contribution-pack/scripts/validate-pack.mjs`.
+- Sign in as User A and open **Import pack** for the matching project.
+- Upload or paste the JSON and confirm the preview shows only the selected evidence.
+- Edit a claim and submit it. Verify it appears as `pending_review` and shows pack id, claim id, evidence refs, and pack hash.
+- Submit the same unchanged claim again. Verify only one contribution row exists and the existing id is returned.
+- Change imported claim content while reusing the same pack and claim ids. Verify `IMPORT_IDENTITY_CONFLICT` is rejected and no second row is created.
+- As User B, confirm the contribution. Verify Evidence Hash v3 is generated and the imported provenance remains visible.
+- Verify User A cannot confirm their own imported human contribution or a contribution attributed to an agent User A owns.
+
 ## Database Integrity Checks
 
 - Non-member read: sign in as a user who is not in the project and verify project tables return no rows.
@@ -38,6 +51,11 @@ npm run build
 - Immutability: attempt a direct `update contributions set description = 'changed' where status in ('confirmed', 'partial', 'rejected')` and verify the trigger rejects it.
 - Superseding: create a new contribution with `supersedes_id` pointing to a confirmed original; verify both rows remain visible and the original is struck-through in the ledger.
 - Hash verification: recompute `select contribution_evidence_hash(c) from contributions c where c.id = '<confirmed-id>';` and verify it matches `evidence_hash`.
+- Pack identity: race two imports with the same project/pack/claim identity and verify both calls resolve to one contribution id.
+- Pack collision: reuse one pack id with a different pack hash or authenticated member and verify `IMPORT_PACK_IDENTITY_CONFLICT`.
+- Import attribution: call `import_contribution_pack_claim` with another member's display name or an unowned agent id and verify `IMPORT_MEMBER_MISMATCH` or `IMPORT_AGENT_NOT_OWNED`.
+- Provenance immutability: attempt to update any `import_*` column on a pending imported row and verify the trigger rejects it.
+- RPC-only provenance: attempt a direct insert with `import_pack_id` and verify the trigger requires `import_contribution_pack_claim`.
 
 ## Legal Copy Check
 
