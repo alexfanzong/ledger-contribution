@@ -42,7 +42,7 @@ describe("assessPmClaim", () => {
     ).toBe("insufficient_evidence")
   })
 
-  it("requires review for code without linked test evidence", () => {
+  it("reports insufficient evidence for code without linked test evidence", () => {
     expect(
       assessPmClaim({
         category: "code",
@@ -51,7 +51,7 @@ describe("assessPmClaim", () => {
           { ref: "commit:abc", kind: "commit", summary: "Implemented the feature." },
         ],
       }).decision
-    ).toBe("needs_review")
+    ).toBe("insufficient_evidence")
   })
 
   it("does not let confidence replace missing evidence", () => {

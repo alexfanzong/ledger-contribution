@@ -42,6 +42,19 @@ for select using (is_project_member(project_id));
 
 grant select on contribution_agent_verifications to authenticated;
 
+create or replace function prevent_pm_agent_verification_update()
+returns trigger
+language plpgsql
+as $$
+begin
+  raise exception 'PM Agent verification records are immutable';
+end;
+$$;
+
+create trigger contribution_agent_verifications_immutable
+before update on contribution_agent_verifications
+for each row execute function prevent_pm_agent_verification_update();
+
 -- Preserve the already-validated import implementation as an internal helper.
 -- Its privileges move with the rename, so revoke client execution explicitly.
 alter function import_contribution_pack_claim(
@@ -94,6 +107,7 @@ begin
     p_contributor_agent_id
   );
 
+  begin
   select claim.item into strict v_claim
   from jsonb_array_elements(p_pack->'claims') as claim(item)
   where claim.item->>'claim_id' = p_claim_id;
@@ -121,13 +135,12 @@ begin
   v_verification_evidence_satisfied :=
     p_category <> 'code' or v_has_test_evidence;
 
-  if not v_has_evidence then
+  if not v_has_evidence or not v_verification_evidence_satisfied then
     v_decision := 'insufficient_evidence';
     v_summary :=
       'The claim does not include enough linked evidence for PM Agent pre-verification.';
   elsif not v_references_resolved
     or v_uncertainty is not null
-    or not v_verification_evidence_satisfied
   then
     v_decision := 'needs_review';
     v_summary :=
@@ -212,6 +225,10 @@ begin
     v_input_fingerprint
   )
   on conflict (contribution_id, policy_version, input_fingerprint) do nothing;
+
+  exception when others then
+    raise warning 'PM_AGENT_ASSESSMENT_FAILED contribution_id=%', v_contribution_id;
+  end;
 
   return v_contribution_id;
 end;
