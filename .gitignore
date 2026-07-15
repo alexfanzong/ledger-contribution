@@ -10,3 +10,16 @@ coverage
 
 # Local validation screenshots can contain test account details.
 测试截图/
+
+# Private product strategy, agent handoffs, and review material.
+# Keep these files available locally, but never publish them from this repo.
+/.private/
+/private/
+/docs/internal/
+/AGENTS.md
+/PRD-*.md
+/codex-brief-*.md
+/LEDGER_OPENAI_BUILD_WEEK_PROJECT_BRIEF.md
+/docs/claude-review-prompt.md
+/docs/validation-run-*.md
+/docs/superpowers/

@@ -1,13 +1,10 @@
 # MVP Test Plan
 
 The whole Product Flow below can be executed by one person using two email
-accounts (normal + incognito window) — no real team required. See the
-"休眠状态与激活 playbook" section in `AGENTS.md` for what solo testing does and
-does not validate, and for the planned Playwright two-user E2E automation.
-
-Latest real-stack validation notes:
-
-- [MVP Validation Run - 2026-06-12](./validation-run-2026-06-12.md)
+accounts (normal + incognito window) — no real team required. This verifies
+the two-party mechanics, but it does not prove real product demand or replace
+testing with an independent team. A future Playwright suite can automate the
+same two-user regression flow.
 
 ## Build Checks
 
