@@ -1,6 +1,7 @@
 import { createContribution } from "@/lib/actions";
 import { ProjectNav } from "@/components/nav";
 import { SubmitButton } from "@/components/submit-button";
+import { ImportedEvidence } from "@/components/imported-evidence";
 import { ActionNotice, Field, inputClass, PageShell, Panel, StatusBadge } from "@/components/ui";
 import { createClient } from "@/lib/supabase/server";
 import type { Agent, Contribution, Member, Milestone } from "@/lib/types";
@@ -125,6 +126,7 @@ export default async function LedgerPage({
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2 pr-3">Impact</th>
                   <th className="py-2 pr-3">Evidence Hash</th>
+                  <th className="py-2 pr-3">Import source</th>
                   <th className="py-2 pr-3">Future verification</th>
                 </tr>
               </thead>
@@ -156,6 +158,15 @@ export default async function LedgerPage({
                         ) : (
                           <span className="text-muted">not confirmed</span>
                         )}
+                      </td>
+                      <td className="py-3 pr-3">
+                        <ImportedEvidence
+                          packId={contribution.import_pack_id}
+                          claimId={contribution.import_claim_id}
+                          packHash={contribution.import_pack_hash}
+                          provenance={contribution.import_provenance}
+                          compact
+                        />
                       </td>
                       <td className="py-3 pr-3 text-muted">
                         {contribution.evidence_hash ? "Ready" : "Pending peer confirmation"}

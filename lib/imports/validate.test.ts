@@ -93,6 +93,19 @@ describe("validatePackForActor", () => {
     expect(issueCodes(result)).toContain("PROJECT_MISMATCH")
   })
 
+  it("rejects a human pack naming a different contributor", () => {
+    const result = validatePackForActor(
+      {
+        ...pack,
+        contributor_hint: { type: "human", display_name: "Another Member" },
+      },
+      actor
+    )
+
+    expect(result.success).toBe(false)
+    expect(issueCodes(result)).toContain("MEMBER_MISMATCH")
+  })
+
   it("binds an agent pack only to an agent owned by the member", () => {
     const result = validatePackForActor(
       {

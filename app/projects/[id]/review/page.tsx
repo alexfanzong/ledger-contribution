@@ -1,6 +1,7 @@
 import { reviewContribution } from "@/lib/actions";
 import { ProjectNav } from "@/components/nav";
 import { SubmitButton } from "@/components/submit-button";
+import { ImportedEvidence } from "@/components/imported-evidence";
 import { ActionNotice, Field, inputClass, PageShell, Panel, StatusBadge } from "@/components/ui";
 import { createClient } from "@/lib/supabase/server";
 import type { Agent, Member } from "@/lib/types";
@@ -87,6 +88,13 @@ export default async function ReviewPage({
                     ) : null}
                   </div>
                 </div>
+
+                <ImportedEvidence
+                  packId={contribution.import_pack_id}
+                  claimId={contribution.import_claim_id}
+                  packHash={contribution.import_pack_hash}
+                  provenance={contribution.import_provenance}
+                />
 
                 <form action={reviewContribution} className="grid gap-3 md:grid-cols-[160px_160px_1fr_auto]">
                   <input type="hidden" name="project_id" value={id} />

@@ -58,6 +58,13 @@ export type Contribution = {
   review_note: string | null;
   confirmed_at: string | null;
   evidence_hash: string | null;
+  evidence_hash_version: number | null;
+  import_schema_version: string | null;
+  import_pack_id: string | null;
+  import_claim_id: string | null;
+  import_pack_hash: string | null;
+  import_claim_hash: string | null;
+  import_provenance: unknown | null;
   supersedes_id: string | null;
   is_demo: boolean;
   created_at: string;

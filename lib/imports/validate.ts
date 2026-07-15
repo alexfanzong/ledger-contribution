@@ -90,6 +90,19 @@ export function validatePackForActor(
   }
 
   if (pack.contributor_hint.type === "human") {
+    if (pack.contributor_hint.display_name !== actor.member.display_name) {
+      return {
+        success: false,
+        issues: [
+          {
+            code: "MEMBER_MISMATCH",
+            path: "contributor_hint.display_name",
+            message: "Contribution Pack names a different project member.",
+          },
+        ],
+      }
+    }
+
     return {
       success: true,
       attribution: {
