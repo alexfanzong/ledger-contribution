@@ -34,6 +34,23 @@ export type PmAssessmentInput = {
   confidence?: number
 }
 
+export type PmDecisionPresentation = {
+  label: string
+  tone: "success" | "warning" | "neutral"
+}
+
+const DECISION_PRESENTATIONS: Record<
+  PmVerificationDecision,
+  PmDecisionPresentation
+> = {
+  agent_verified: { label: "Agent Verified", tone: "success" },
+  needs_review: { label: "Needs Review", tone: "warning" },
+  insufficient_evidence: {
+    label: "Insufficient Evidence",
+    tone: "neutral",
+  },
+}
+
 const SUMMARIES: Record<PmVerificationDecision, string> = {
   agent_verified:
     "Selected evidence passes the Demo PM Agent policy. Human confirmation is still required.",
@@ -41,6 +58,12 @@ const SUMMARIES: Record<PmVerificationDecision, string> = {
     "Selected evidence needs human judgment before attribution and impact are confirmed.",
   insufficient_evidence:
     "The claim does not include enough linked evidence for PM Agent pre-verification.",
+}
+
+export function pmDecisionPresentation(
+  decision: PmVerificationDecision
+): PmDecisionPresentation {
+  return DECISION_PRESENTATIONS[decision]
 }
 
 export function assessPmClaim(input: PmAssessmentInput): PmAssessmentResult {

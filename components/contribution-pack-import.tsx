@@ -8,7 +8,9 @@ import {
   type PackActorContext,
 } from "@/lib/imports/validate";
 import type { ContributionPack, ContributionPackIssue } from "@/lib/imports/schemas";
+import { assessPmClaim } from "@/lib/pm-verification";
 import { CONTRIBUTION_CATEGORIES, IMPACTS } from "@/lib/types";
+import { PmAgentVerification } from "@/components/pm-agent-verification";
 import { SubmitButton } from "@/components/submit-button";
 import { Button, Field, inputClass, Panel } from "@/components/ui";
 
@@ -135,8 +137,16 @@ export function ContributionPackImport({
           </div>
 
           <div className="grid gap-4">
-            {pack.claims.map((claim) => (
-              <form
+            {pack.claims.map((claim) => {
+              const pmPreview = assessPmClaim({
+                category: claim.category,
+                evidenceRefs: claim.evidence_refs,
+                evidence: pack.evidence,
+                uncertainty: claim.uncertainty,
+              });
+
+              return (
+                <form
                 action={importContributionPackClaim}
                 className="grid gap-4 rounded-md border border-line p-4"
                 key={claim.claim_id}
@@ -213,6 +223,12 @@ export function ContributionPackImport({
                   <p className="text-sm text-muted">Uncertainty: {claim.uncertainty}</p>
                 ) : null}
 
+                <PmAgentVerification verification={pmPreview} preview />
+                <p className="text-xs text-muted">
+                  Preview uses the pack&apos;s original claim. Ledger runs and stores the assessment
+                  again after you submit any edits.
+                </p>
+
                 <div>
                   <SubmitButton
                     className="focus-ring min-h-10 rounded-md bg-ink px-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
@@ -221,8 +237,9 @@ export function ContributionPackImport({
                     Submit this claim for peer confirmation
                   </SubmitButton>
                 </div>
-              </form>
-            ))}
+                </form>
+              );
+            })}
           </div>
         </Panel>
       ) : null}

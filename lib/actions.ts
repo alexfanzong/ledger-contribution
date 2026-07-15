@@ -319,6 +319,6 @@ export async function importContributionPackClaim(formData: FormData) {
   revalidatePath(`/projects/${projectId}/ledger`);
   revalidatePath(`/projects/${projectId}/review`);
   redirect(
-    `${returnPath}?message=${encodeURIComponent("Claim submitted for peer confirmation.")}`
+    `${returnPath}?message=${encodeURIComponent("Claim submitted. Demo PM Agent pre-verification is ready; peer confirmation is still required.")}`
   );
 }

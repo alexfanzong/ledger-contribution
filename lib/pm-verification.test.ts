@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { assessPmClaim, PM_POLICY_VERSION } from "@/lib/pm-verification"
+import {
+  assessPmClaim,
+  pmDecisionPresentation,
+  PM_POLICY_VERSION,
+} from "@/lib/pm-verification"
 
 const passingCodeInput = {
   category: "code",
@@ -78,5 +82,15 @@ describe("assessPmClaim", () => {
     expect(assessPmClaim(passingCodeInput)).toEqual(
       assessPmClaim(structuredClone(passingCodeInput))
     )
+  })
+})
+
+describe("pmDecisionPresentation", () => {
+  it.each([
+    ["agent_verified", "Agent Verified", "success"],
+    ["needs_review", "Needs Review", "warning"],
+    ["insufficient_evidence", "Insufficient Evidence", "neutral"],
+  ] as const)("maps %s to judge-facing copy", (decision, label, tone) => {
+    expect(pmDecisionPresentation(decision)).toEqual({ label, tone })
   })
 })
