@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ledger Contribution Pack"
+  short_description: "Turn selected work evidence into a reviewable pack"
+  default_prompt: "Use $ledger-contribution-pack to create a draft Contribution Pack from evidence I explicitly select."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "invalid-fixture",
+  "project_name": "Contribution Ledger",
+  "period": {
+    "start": "2026-07-16",
+    "end": "2026-07-15"
+  },
+  "contributor_hint": {
+    "type": "human",
+    "display_name": "Fixture User"
+  },
+  "evidence": [],
+  "claims": [],
+  "generated_by": {
+    "tool": "codex",
+    "generated_at": "not-a-date"
+  }
+}

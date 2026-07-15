@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "pack-YYYY-MM-DD-project-scope",
+  "project_name": "Project name",
+  "period": {
+    "start": "2026-07-14",
+    "end": "2026-07-15"
+  },
+  "contributor_hint": {
+    "type": "human",
+    "display_name": "Contributor display name"
+  },
+  "evidence": [
+    {
+      "ref": "commit:abcdef1",
+      "kind": "commit",
+      "uri": "git:commit:abcdef1",
+      "title": "Bounded implementation change",
+      "summary": "Observed implementation facts supported by this commit."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim:bounded-change",
+      "category": "code",
+      "description": "Concrete proposed contribution supported by the selected evidence.",
+      "proposed_impact": "medium",
+      "evidence_refs": [
+        "commit:abcdef1"
+      ],
+      "uncertainty": "Impact remains subject to peer confirmation."
+    }
+  ],
+  "generated_by": {
+    "tool": "codex",
+    "model": "model identifier if known",
+    "generated_at": "2026-07-15T04:00:00.000Z"
+  }
+}
