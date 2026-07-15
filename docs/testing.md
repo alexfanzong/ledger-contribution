@@ -31,10 +31,11 @@ npm test
 - The simulation page includes the confirmed record in Non-Binding Discussion Weight.
 - Records without a milestone are grouped into one no-milestone bucket for diminishing returns.
 
-## Codex Contribution Pack Flow
+## Codex Plugin Contribution Pack Flow
 
+- Install `ledger-contribution@personal` from the repository marketplace and start a fresh Codex task.
 - Invoke `$ledger-contribution-pack` with a bounded set of repository evidence.
-- Verify the generated JSON with `.agents/skills/ledger-contribution-pack/scripts/validate-pack.mjs`.
+- Verify the generated JSON with `plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs`.
 - Sign in as User A and open **Import pack** for the matching project.
 - Upload or paste the JSON and confirm the preview shows only the selected evidence.
 - Edit a claim and submit it. Verify it appears as `pending_review` and shows pack id, claim id, evidence refs, and pack hash.

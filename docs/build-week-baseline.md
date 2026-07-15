@@ -11,9 +11,9 @@ Supabase authentication, project membership, agent registration, manual contribu
 
 ## Build Week Increment
 
-A repo-local Codex Skill creates a versioned Contribution Pack from evidence explicitly selected by the user. Ledger validates the pack deterministically, previews editable claims, and accepts selected claims into `pending_review`. Another authenticated member still performs peer confirmation, and Postgres remains responsible for authorization, append-only behavior, idempotent import, and canonical Evidence Hash v3.
+An installable Codex plugin, containing the repo's bounded `ledger-contribution-pack` Skill, creates a versioned Contribution Pack from evidence explicitly selected by the user. Ledger validates the pack deterministically, previews editable claims, and accepts selected claims into `pending_review`. Another authenticated member still performs peer confirmation, and Postgres remains responsible for authorization, append-only behavior, idempotent import, and canonical Evidence Hash v3.
 
-Codex and GPT-5.6 are used through the Codex product while building and running the Skill. The competition build does not require an OpenAI API key and does not call the OpenAI API at product runtime.
+Codex and GPT-5.6 are used through the Codex product while building and running the plugin workflow. The competition build does not require an OpenAI API key and does not call the OpenAI API at product runtime.
 
 ## Migration Gate
 
@@ -28,7 +28,7 @@ Apply them in order only after confirming the remote contains test data only and
 ## Trust Boundary
 
 - Contribution Packs and uploaded JSON are untrusted input.
-- The Skill may inspect only commits, files, test output, or summaries explicitly selected by the user.
+- The plugin may inspect only commits, files, test output, or summaries explicitly selected by the user.
 - Importing never confirms a contribution.
 - A user may attribute an imported claim only to themselves or an agent they own.
 - Reviewed records remain append-only; corrections use `supersedes_id`.
