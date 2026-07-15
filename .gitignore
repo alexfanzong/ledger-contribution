@@ -7,3 +7,6 @@ dist
 coverage
 *.tsbuildinfo
 .DS_Store
+
+# Local validation screenshots can contain test account details.
+测试截图/
