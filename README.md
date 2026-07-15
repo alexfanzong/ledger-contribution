@@ -1,5 +1,9 @@
 # Contribution Ledger MVP
 
+<p align="center">
+  <img src="public/brand/ledger-team-logo.png" alt="Ledger team contribution logo" width="280" />
+</p>
+
 Real-stack MVP for contribution evidence, peer confirmation, server-side evidence hashes, and non-binding discussion weights for AI teams and early-stage startup teams.
 
 ## Stack
