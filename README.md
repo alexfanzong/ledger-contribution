@@ -18,7 +18,7 @@ Ledger turns a bounded set of work evidence into draft contribution claims. The 
 - An editable import screen that shows every claim and evidence reference before submission.
 - A deterministic Demo PM Agent that pre-verifies progress evidence without an API key.
 - Database-enforced peer confirmation. Contributors and agent owners cannot approve their own work.
-- Append-only reviewed records with idempotent imports and server-side evidence hashes.
+- Append-only reviewed rows within a retained project, with idempotent imports and server-side evidence hashes.
 - Non-binding discussion weights for allocation conversations.
 
 ## Install the Codex plugin
@@ -76,7 +76,7 @@ The import RPC binds a human claim to the authenticated member, or an agent clai
 
 ## Run the web app
 
-Ledger uses Next.js 15, TypeScript, Supabase Auth, and Postgres.
+Ledger uses Next.js 15, TypeScript, Supabase Auth, and Supabase Postgres. The SQL migrations use Supabase's `auth` and `extensions` schemas, so they target a hosted Supabase project or a local `supabase start` stack rather than arbitrary vanilla Postgres.
 
 ```bash
 npm install
@@ -112,8 +112,9 @@ The product flow is:
 | Import RPC | Enforces membership, contributor ownership, pack identity, and retry safety. |
 | Demo PM Agent | Stores a versioned, idempotent evidence assessment; clients receive read access only. |
 | Peer confirmation | Rejects self-review and review of an agent by that agent's owner. |
-| Reviewed record | Prevents edits and deletion; corrections create a new superseding record. |
-| Evidence Hash | Computes canonical SHA-256 input inside Postgres after peer review. |
+| Reviewed row | Prevents direct row edits and deletion; corrections create a new superseding row. |
+| Project lifecycle | The project owner can delete the whole project in this MVP, which cascades its rows. Production retention/export policy is not implemented yet. |
+| Evidence Hash | Computes canonical SHA-256 input inside Postgres after peer review. V3 covers canonical contribution and import provenance, but intentionally excludes the free-text `review_note`. |
 
 Contribution Packs are untrusted input. Evidence text remains inert even when it contains prompt-like instructions. Wallets, signatures, payments, tokens, and on-chain writes are outside this build.
 
@@ -137,7 +138,7 @@ npm run typecheck
 npm run build
 ```
 
-The current suite covers pack parsing, actor validation, provenance projection, claim preparation, PM Agent policy and migration permissions, scoring, superseding records, and retry conflicts. The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
+The current suite covers pack parsing, actor validation, provenance projection, claim preparation, PM Agent policy, defensive row parsing, scoring, superseding records, redirect safety, retry conflicts, and static migration contracts. The SQL contract tests inspect migration text; they do not replace applying the migrations to a real Supabase database and running the negative RLS/RPC checks in [`docs/testing.md`](docs/testing.md). The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
 
 ## Production data durability
 

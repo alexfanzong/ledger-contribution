@@ -43,6 +43,10 @@ export function readPmAgentVerification(
   if (value.verifier_kind !== "deterministic_demo_pm_agent") return null
   if (!boundedString(value.summary, 1, 1000)) return null
   if (
+    value.uncertainty !== null &&
+    !boundedString(value.uncertainty, 1, 1000)
+  ) return null
+  if (
     !boundedString(value.input_fingerprint, 64, 64) ||
     !SHA256_PATTERN.test(value.input_fingerprint)
   ) return null
@@ -78,6 +82,7 @@ export function readPmAgentVerification(
     verifier_kind: "deterministic_demo_pm_agent",
     checks,
     summary: value.summary,
+    uncertainty: value.uncertainty,
     input_fingerprint: value.input_fingerprint,
     evaluated_at: value.evaluated_at,
   }

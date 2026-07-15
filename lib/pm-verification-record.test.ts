@@ -17,6 +17,7 @@ const validRecord = {
     },
   ],
   summary: "The selected evidence passes the demo policy.",
+  uncertainty: null,
   input_fingerprint: "a".repeat(64),
   evaluated_at: "2026-07-15T12:00:00.000Z",
 }
@@ -44,6 +45,23 @@ describe("readPmAgentVerification", () => {
 
     expect(result?.checks[0].explanation).toBe(explanation)
     expect(result?.decision).toBe("agent_verified")
+  })
+
+  it("preserves bounded uncertainty for the human reviewer", () => {
+    const uncertainty = "Attribution between the human and agent is unresolved."
+
+    expect(
+      readPmAgentVerification({ ...validRecord, uncertainty })?.uncertainty
+    ).toBe(uncertainty)
+  })
+
+  it("rejects malformed or oversized uncertainty", () => {
+    expect(
+      readPmAgentVerification({ ...validRecord, uncertainty: { text: "unknown" } })
+    ).toBeNull()
+    expect(
+      readPmAgentVerification({ ...validRecord, uncertainty: "x".repeat(1001) })
+    ).toBeNull()
   })
 
   it("rejects invalid fingerprints and timestamps", () => {

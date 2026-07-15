@@ -40,4 +40,6 @@ These cases exercise the plugin without requiring a rebuild or an OpenAI API key
 
 ## Ledger handoff
 
-For the end-to-end demo, import the valid pack into a matching Ledger project. The contributor can edit and submit a claim only as themselves or an agent they own. The row must remain `pending_review` until a different authenticated member confirms it. Only then does Postgres create Evidence Hash v3.
+For the end-to-end demo, create a Ledger project whose name matches the template pack and import the valid pack. The import preview and review page show the deterministic Demo PM Agent result; unresolved uncertainty remains visible in full. The contributor can edit and submit a claim only as themselves or an agent they own. The row must remain `pending_review` until a different authenticated member confirms it. Only then does Postgres create Evidence Hash v3.
+
+The one-click sample project predates the Build Week import path and does not seed PM Agent assessments. Judges should use the validated Contribution Pack flow above so the demo exercises the real import RPC and assessment boundary.

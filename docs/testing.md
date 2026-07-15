@@ -39,7 +39,7 @@ npm test
 - Verify the import preview shows the deterministic Demo PM Agent result and states that human confirmation remains required.
 - Verify the stored review-page assessment shows `pm-demo-v1`, ordered checks, and an input fingerprint after import.
 - For a code claim with linked test evidence and no uncertainty, verify the result is `Agent Verified`.
-- For a claim with uncertainty, verify the result is `Needs Review`. For a code claim without linked test evidence, verify the result is `Insufficient Evidence`.
+- For a claim with uncertainty, verify the result is `Needs Review` and the full uncertainty text appears before the human review controls. For a code claim without linked test evidence, verify the result is `Insufficient Evidence`.
 - Submit the same unchanged claim again. Verify only one contribution row exists and the existing id is returned.
 - Change imported claim content while reusing the same pack and claim ids. Verify `IMPORT_IDENTITY_CONFLICT` is rejected and no second row is created.
 - As User B, confirm the contribution. Verify Evidence Hash v3 is generated and the imported provenance remains visible.
@@ -62,6 +62,8 @@ npm test
 - PM assessment idempotency: repeat the same import and verify only one row exists for the same contribution, `pm-demo-v1`, and input fingerprint.
 - PM/human separation: verify the PM import wrapper never sets `reviewer_member_id`, `final_impact`, `confirmed_at`, `evidence_hash`, or `evidence_hash_version`.
 - PM prompt isolation: include prompt-like text in an evidence summary and verify it remains display text without changing the PM decision policy.
+- PM content validation: submit evidence with an unsupported kind, empty title/summary, oversized title/summary/URI, or oversized/non-string uncertainty and verify the import RPC rejects it.
+- Project deletion boundary: verify an owner can still delete the whole project and that cascading deletion removes reviewed rows; treat this as an explicit MVP retention limitation, not row-level immutability.
 
 ## Legal Copy Check
 
