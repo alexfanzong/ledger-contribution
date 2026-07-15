@@ -1,0 +1,20 @@
+{
+  "name": "personal",
+  "interface": {
+    "displayName": "Ledger Build Week"
+  },
+  "plugins": [
+    {
+      "name": "ledger-contribution",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ledger-contribution"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

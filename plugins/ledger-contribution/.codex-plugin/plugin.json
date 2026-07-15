@@ -1,0 +1,33 @@
+{
+  "name": "ledger-contribution",
+  "version": "0.1.0",
+  "description": "Turn selected human-agent work into evidence-bound contribution drafts for peer confirmation in Ledger.",
+  "author": {
+    "name": "Alex Fan"
+  },
+  "keywords": [
+    "codex",
+    "contribution",
+    "evidence",
+    "peer-review",
+    "productivity"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Ledger Contribution",
+    "shortDescription": "Draft reviewable contributions from selected work",
+    "longDescription": "Ledger Contribution turns commits, files, tests, deliverables, and summaries that a user explicitly selects into a versioned Contribution Pack. The draft can be inspected and imported into Ledger, where another authenticated team member must confirm it before the database creates an immutable Evidence Hash.",
+    "developerName": "Alex Fan",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Create a Ledger Contribution Pack from this week's selected commits.",
+      "Validate this contribution pack before I import it into Ledger.",
+      "Draft evidence-bound claims for work I explicitly select."
+    ],
+    "brandColor": "#0F766E"
+  }
+}

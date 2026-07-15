@@ -10,7 +10,7 @@ Real-stack MVP for contribution evidence, peer confirmation, server-side evidenc
 - Server Actions for all mutations
 - Supabase migration for RLS, peer-confirmation RPC, immutable contributions, and server-side SHA-256 evidence hashes
 
-Supabase is the current managed Postgres host, not a permanent product coupling. The Codex Skill is stateless and database-independent; a future MCP-backed app can connect to the same Ledger service boundary without changing the pack format.
+Supabase is the current managed Postgres host, not a permanent product coupling. The Codex plugin is stateless and database-independent; a future MCP-backed app can connect to the same Ledger service boundary without changing the pack format.
 
 ## Local Setup
 
@@ -55,16 +55,25 @@ See `AGENTS.md` for the current project status, prioritized backlog, and working
 7. Review confirmed records in the ledger.
 8. Use the simulation page as a non-binding discussion weight view.
 
-## Codex Contribution Pack Flow
+## Ledger Contribution Plugin
 
-The repository includes a Codex-native Skill at `.agents/skills/ledger-contribution-pack`. It turns only the work evidence a user explicitly places in scope into a versioned JSON draft. It does not need an OpenAI API key and does not scan Codex account history, environment variables, unrelated folders, or the computer.
+The repository includes an installable Codex plugin at `plugins/ledger-contribution`. Its bundled Skill turns only the work evidence a user explicitly places in scope into a versioned JSON draft. It does not need an OpenAI API key and does not scan Codex account history, environment variables, unrelated folders, or the computer.
+
+Install it from the repository marketplace:
+
+```bash
+codex plugin marketplace add /absolute/path/to/Ledger
+codex plugin add ledger-contribution@personal
+```
+
+Start a new Codex task after installation. See `plugins/ledger-contribution/README.md` for supported platforms and `plugins/ledger-contribution/JUDGE_TESTING.md` for five positive and three negative test cases.
 
 1. Invoke `$ledger-contribution-pack` and identify the repository evidence and time range to include.
 2. Inspect the generated `ledger-contribution-pack.json` draft.
 3. Validate it independently:
 
 ```bash
-node .agents/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
+node plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
 ```
 
 4. Open **Import pack** inside the target Ledger project, upload or paste the JSON, and inspect the editable preview.
