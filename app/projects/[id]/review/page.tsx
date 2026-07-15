@@ -2,9 +2,11 @@ import { reviewContribution } from "@/lib/actions";
 import { ProjectNav } from "@/components/nav";
 import { SubmitButton } from "@/components/submit-button";
 import { ImportedEvidence } from "@/components/imported-evidence";
+import { PmAgentVerification } from "@/components/pm-agent-verification";
 import { ActionNotice, Field, inputClass, PageShell, Panel, StatusBadge } from "@/components/ui";
 import { createClient } from "@/lib/supabase/server";
-import type { Agent, Member } from "@/lib/types";
+import { readPmAgentVerification } from "@/lib/pm-verification-record";
+import type { Agent, ContributionAgentVerification, Member } from "@/lib/types";
 import type { Contribution } from "@/lib/types";
 import { IMPACTS } from "@/lib/types";
 
@@ -21,7 +23,7 @@ export default async function ReviewPage({
   const query = await searchParams;
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-  const [{ data: project }, { data: pending }, { data: members }, { data: agents }] = await Promise.all([
+  const [{ data: project }, { data: pending }, { data: members }, { data: agents }, { data: verifications }] = await Promise.all([
     supabase.from("projects").select("name").eq("id", id).single(),
     supabase
       .from("contributions")
@@ -30,7 +32,12 @@ export default async function ReviewPage({
       .eq("status", "pending_review")
       .order("created_at", { ascending: true }),
     supabase.from("project_members").select("*").eq("project_id", id),
-    supabase.from("agent_registry").select("*").eq("project_id", id)
+    supabase.from("agent_registry").select("*").eq("project_id", id),
+    supabase
+      .from("contribution_agent_verifications")
+      .select("*")
+      .eq("project_id", id)
+      .order("evaluated_at", { ascending: false })
   ]);
   const currentMember = (members as Member[] | null)?.find(
     (member) => !member.is_demo && member.profile_id === userData.user?.id
@@ -47,6 +54,13 @@ export default async function ReviewPage({
     return true;
   });
   const hiddenCount = ((pending ?? []) as Contribution[]).length - visiblePending.length;
+  const latestVerificationByContribution = new Map<string, ContributionAgentVerification>();
+  for (const value of verifications ?? []) {
+    const verification = readPmAgentVerification(value);
+    if (verification && !latestVerificationByContribution.has(verification.contribution_id)) {
+      latestVerificationByContribution.set(verification.contribution_id, verification);
+    }
+  }
 
   return (
     <PageShell title="Peer confirmation" eyebrow={project?.name}>
@@ -95,6 +109,16 @@ export default async function ReviewPage({
                   packHash={contribution.import_pack_hash}
                   provenance={contribution.import_provenance}
                 />
+
+                {latestVerificationByContribution.get(contribution.id) ? (
+                  <PmAgentVerification
+                    verification={latestVerificationByContribution.get(contribution.id)!}
+                  />
+                ) : contribution.import_pack_id ? (
+                  <p className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-muted">
+                    Demo PM Agent assessment is unavailable. Peer confirmation can still continue.
+                  </p>
+                ) : null}
 
                 <form action={reviewContribution} className="grid gap-3 md:grid-cols-[160px_160px_1fr_auto]">
                   <input type="hidden" name="project_id" value={id} />

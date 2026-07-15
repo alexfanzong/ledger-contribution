@@ -2,9 +2,11 @@ import { createContribution } from "@/lib/actions";
 import { ProjectNav } from "@/components/nav";
 import { SubmitButton } from "@/components/submit-button";
 import { ImportedEvidence } from "@/components/imported-evidence";
+import { PmAgentVerification } from "@/components/pm-agent-verification";
 import { ActionNotice, Field, inputClass, PageShell, Panel, StatusBadge } from "@/components/ui";
+import { readPmAgentVerification } from "@/lib/pm-verification-record";
 import { createClient } from "@/lib/supabase/server";
-import type { Agent, Contribution, Member, Milestone } from "@/lib/types";
+import type { Agent, Contribution, ContributionAgentVerification, Member, Milestone } from "@/lib/types";
 import { CONTRIBUTION_CATEGORIES, IMPACTS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -20,18 +22,30 @@ export default async function LedgerPage({
   const query = await searchParams;
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-  const [{ data: project }, { data: members }, { data: milestones }, { data: contributions }, { data: agents }] =
+  const [{ data: project }, { data: members }, { data: milestones }, { data: contributions }, { data: agents }, { data: verifications }] =
     await Promise.all([
       supabase.from("projects").select("name").eq("id", id).single(),
       supabase.from("project_members").select("*").eq("project_id", id).order("created_at"),
       supabase.from("milestones").select("*").eq("project_id", id).order("created_at", { ascending: false }),
       supabase.from("contributions").select("*").eq("project_id", id).order("created_at", { ascending: false }),
-      supabase.from("agent_registry").select("*").eq("project_id", id).order("created_at")
+      supabase.from("agent_registry").select("*").eq("project_id", id).order("created_at"),
+      supabase
+        .from("contribution_agent_verifications")
+        .select("*")
+        .eq("project_id", id)
+        .order("evaluated_at", { ascending: false })
     ]);
 
   const currentMember = (members as Member[] | null)?.find(
     (member) => !member.is_demo && member.profile_id === userData.user?.id
   );
+  const latestVerificationByContribution = new Map<string, ContributionAgentVerification>();
+  for (const value of verifications ?? []) {
+    const verification = readPmAgentVerification(value);
+    if (verification && !latestVerificationByContribution.has(verification.contribution_id)) {
+      latestVerificationByContribution.set(verification.contribution_id, verification);
+    }
+  }
 
   return (
     <PageShell title="Contribution ledger" eyebrow={project?.name}>
@@ -117,7 +131,7 @@ export default async function LedgerPage({
 
         <Panel title="Ledger">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] border-collapse text-sm">
+            <table className="w-full min-w-[1080px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-line text-left text-muted">
                   <th className="py-2 pr-3">Contribution</th>
@@ -127,6 +141,7 @@ export default async function LedgerPage({
                   <th className="py-2 pr-3">Impact</th>
                   <th className="py-2 pr-3">Evidence Hash</th>
                   <th className="py-2 pr-3">Import source</th>
+                  <th className="py-2 pr-3">PM Agent</th>
                   <th className="py-2 pr-3">Future verification</th>
                 </tr>
               </thead>
@@ -167,6 +182,18 @@ export default async function LedgerPage({
                           provenance={contribution.import_provenance}
                           compact
                         />
+                      </td>
+                      <td className="py-3 pr-3">
+                        {latestVerificationByContribution.get(contribution.id) ? (
+                          <PmAgentVerification
+                            verification={latestVerificationByContribution.get(contribution.id)!}
+                            compact
+                          />
+                        ) : (
+                          <span className="text-xs text-muted">
+                            {contribution.import_pack_id ? "assessment unavailable" : "not assessed"}
+                          </span>
+                        )}
                       </td>
                       <td className="py-3 pr-3 text-muted">
                         {contribution.evidence_hash ? "Ready" : "Pending peer confirmation"}
