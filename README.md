@@ -43,7 +43,7 @@ codex plugin marketplace add /absolute/path/to/ledger-contribution
 Open Codex in a repository and identify the evidence you want included:
 
 ```text
-Use the Ledger Contribution plugin to create a draft Contribution Pack from commits 004cd08 and da9269e, plus the related test results. Attribute only work supported by those sources.
+Use the Ledger Contribution plugin to create a draft Contribution Pack from commits f4f17a3 and 8a0328c, plus the related test results. Attribute only work supported by those sources.
 ```
 
 Codex writes `ledger-contribution-pack.json` unless you choose another path. Validate the file before importing it:
