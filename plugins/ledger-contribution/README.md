@@ -17,16 +17,21 @@ The plugin does not confirm its own claims. It creates a versioned Contribution 
 - Primary: Codex in the ChatGPT desktop app on macOS or Windows.
 - Also supported by the bundled Skill workflow: Codex CLI and the Codex IDE extension.
 
-## Install from this repository
+## Install
 
-From a machine with Codex plugin commands available, add the repository marketplace and install the plugin:
+Register the public marketplace:
 
 ```bash
-codex plugin marketplace add /absolute/path/to/Ledger
-codex plugin add ledger-contribution@personal
+codex plugin marketplace add https://github.com/alexfanzong/ledger-contribution
 ```
 
-Start a new Codex task after installation so the plugin Skill is loaded.
+Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task so Codex loads the bundled Skill.
+
+For local development from a cloned checkout, register the local repository instead:
+
+```bash
+codex plugin marketplace add /absolute/path/to/ledger-contribution
+```
 
 ## Try it
 
@@ -39,7 +44,7 @@ Use the Ledger Contribution plugin to create a draft Contribution Pack from comm
 If no output path is provided, the Skill writes `ledger-contribution-pack.json` in the current working directory. Validate it with:
 
 ```bash
-node /absolute/path/to/Ledger/plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
+node plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
 ```
 
 Then open the target Ledger project, choose **Import pack**, inspect the editable claims, and submit selected claims for peer confirmation.

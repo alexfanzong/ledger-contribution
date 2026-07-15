@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "description": "Turn selected human-agent work into evidence-bound contribution drafts for peer confirmation in Ledger.",
   "author": {
-    "name": "Alex Fan"
+    "name": "Alex Fan",
+    "url": "https://github.com/alexfanzong"
   },
+  "homepage": "https://github.com/alexfanzong/ledger-contribution",
+  "repository": "https://github.com/alexfanzong/ledger-contribution",
+  "license": "MIT",
   "keywords": [
     "codex",
     "contribution",
@@ -28,6 +32,8 @@
       "Validate this contribution pack before I import it into Ledger.",
       "Draft evidence-bound claims for work I explicitly select."
     ],
-    "brandColor": "#0F766E"
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
   }
 }

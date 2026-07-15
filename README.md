@@ -1,99 +1,152 @@
-# Contribution Ledger MVP
+<div align="center">
+  <img src="public/brand/ledger-team-logo.png" alt="Ledger logo" width="260" />
 
-<p align="center">
-  <img src="public/brand/ledger-team-logo.png" alt="Ledger team contribution logo" width="280" />
-</p>
+  # Ledger
 
-Real-stack MVP for contribution evidence, peer confirmation, server-side evidence hashes, and non-binding discussion weights for AI teams and early-stage startup teams.
+  Evidence-bound contribution records for human-agent teams.
 
-## Stack
+  [Install the plugin](#install-the-codex-plugin) · [Try it](#try-it) · [Run the app](#run-the-web-app) · [Judge testing](plugins/ledger-contribution/JUDGE_TESTING.md)
+</div>
 
-- Next.js App Router + TypeScript
-- Supabase Auth + Postgres
-- Tailwind CSS
-- Server Actions for all mutations
-- Supabase migration for RLS, peer-confirmation RPC, immutable contributions, and server-side SHA-256 evidence hashes
+Teams working with AI agents leave evidence across commits, files, tests, deliverables, and chat summaries. When it is time to discuss who did what, that evidence has usually turned into memory.
 
-Supabase is the current managed Postgres host, not a permanent product coupling. The Codex plugin is stateless and database-independent; a future MCP-backed app can connect to the same Ledger service boundary without changing the pack format.
+Ledger turns a bounded set of work evidence into draft contribution claims. The contributor inspects the draft, another authenticated teammate reviews it, and Postgres locks the reviewed record with a server-side Evidence Hash. The result is a durable input to team discussions, not an automated ownership decision.
 
-## Local Setup
+## What you get
 
-1. Install dependencies:
+- An installable Codex plugin that creates a portable Contribution Pack from evidence you select.
+- An editable import screen that shows every claim and evidence reference before submission.
+- Database-enforced peer confirmation. Contributors and agent owners cannot approve their own work.
+- Append-only reviewed records with idempotent imports and server-side evidence hashes.
+- Non-binding discussion weights for allocation conversations.
 
-```bash
-npm install
-```
+## Install the Codex plugin
 
-2. Create `.env.local`:
+Ledger supports the Codex desktop app on macOS and Windows, Codex CLI, and the Codex IDE extension. The plugin does not require an OpenAI API key.
 
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-3. Apply every migration in `supabase/migrations/` to your Supabase project, in filename (timestamp) order.
-
-4. Run the app:
+Register the marketplace:
 
 ```bash
-npm run dev
+codex plugin marketplace add https://github.com/alexfanzong/ledger-contribution
 ```
 
-5. Checks:
+Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task after installation so Codex loads the bundled Skill.
+
+For local plugin development, register the cloned checkout instead:
 
 ```bash
-npm run typecheck
-npm test
+codex plugin marketplace add /absolute/path/to/ledger-contribution
 ```
 
-See `AGENTS.md` for the current project status, prioritized backlog, and working rules for coding agents.
+## Try it
 
-## MVP Flow
+Open Codex in a repository and identify the evidence you want included:
 
-1. Sign up or sign in with email.
-2. Create a project or use **Create sample project**.
-3. Invite members by email from the Members page.
-4. Create milestones.
-5. Log contributions.
-6. Have another authenticated project member confirm, partially confirm, or reject each pending record.
-7. Review confirmed records in the ledger.
-8. Use the simulation page as a non-binding discussion weight view.
-
-## Ledger Contribution Plugin
-
-The repository includes an installable Codex plugin at `plugins/ledger-contribution`. Its bundled Skill turns only the work evidence a user explicitly places in scope into a versioned JSON draft. It does not need an OpenAI API key and does not scan Codex account history, environment variables, unrelated folders, or the computer.
-
-Install it from the repository marketplace:
-
-```bash
-codex plugin marketplace add /absolute/path/to/Ledger
-codex plugin add ledger-contribution@personal
+```text
+Use the Ledger Contribution plugin to create a draft Contribution Pack from commits 004cd08 and da9269e, plus the related test results. Attribute only work supported by those sources.
 ```
 
-Start a new Codex task after installation. See `plugins/ledger-contribution/README.md` for supported platforms and `plugins/ledger-contribution/JUDGE_TESTING.md` for five positive and three negative test cases.
-
-1. Invoke `$ledger-contribution-pack` and identify the repository evidence and time range to include.
-2. Inspect the generated `ledger-contribution-pack.json` draft.
-3. Validate it independently:
+Codex writes `ledger-contribution-pack.json` unless you choose another path. Validate the file before importing it:
 
 ```bash
 node plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
 ```
 
-4. Open **Import pack** inside the target Ledger project, upload or paste the JSON, and inspect the editable preview.
-5. Submit claims individually. Each becomes `pending_review`; a different project member still has to confirm it.
+The plugin reads only the commits, files, tests, deliverables, summaries, and time range you place in scope. It does not scan Codex account history, environment variables, credentials, unrelated folders, or the rest of your computer.
 
-The import RPC binds a human pack to the authenticated member, or an agent pack to an agent that member owns. A project-level pack identity plus a claim-level unique identity makes concurrent retries idempotent. Imported evidence provenance becomes part of canonical Evidence Hash v3 after peer confirmation.
+## How it works
 
-## Integrity Rules
+```mermaid
+flowchart LR
+    A["Selected work evidence"] --> B["Codex plugin"]
+    B --> C["Contribution Pack"]
+    C --> D["Contributor preview"]
+    D --> E["Pending review"]
+    E --> F["Different teammate"]
+    F --> G["Append-only record + Evidence Hash"]
+```
 
-- Project data is readable only by project members through RLS.
-- Contribution review happens through `review_contribution`, a security-definer database function.
-- A contributor cannot confirm their own contribution.
-- An agent owner cannot confirm their own agent's contribution.
-- Confirmed, partial, and rejected contribution rows are immutable.
-- Corrections are new rows using `supersedes_id`.
-- Evidence hashes are computed inside Postgres from canonical JSON, never in the browser.
-- Codex packs cannot set reviewer, review status, final impact, or Evidence Hash.
-- A `(project, pack, claim)` identity prevents duplicate imports, and one pack id cannot be reused with different content or by another member.
-- Wallets, signatures, gas, chain anchoring, payments, and token logic are intentionally out of scope.
+The plugin is a draft producer. It cannot choose a reviewer, set final impact, confirm a claim, or create an Evidence Hash. Ledger validates the pack again at the web and database boundaries.
+
+The import RPC binds a human claim to the authenticated member, or an agent claim to an agent that member owns. A project-level pack identity plus a claim-level identity makes concurrent retries resolve to one contribution.
+
+## Run the web app
+
+Ledger uses Next.js 15, TypeScript, Supabase Auth, and Postgres.
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Set these values in `.env.local`:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Apply the files in `supabase/migrations/` to a test Supabase project in timestamp order. The migrations create the schema, Row Level Security policies, immutable-review triggers, evidence hashing functions, and the Contribution Pack import RPC.
+
+The product flow is:
+
+1. Create a project and invite another member.
+2. Add a milestone or register an agent contributor.
+3. Import a Contribution Pack or enter a contribution manually.
+4. Have a different member confirm, partially confirm, or reject the pending record.
+5. Inspect the confirmed record and its Evidence Hash in the ledger.
+6. Use the simulation page as a non-binding discussion view.
+
+## Trust model
+
+| Boundary | Enforced behavior |
+| --- | --- |
+| Codex plugin | Produces draft claims from bounded evidence and writes no data to Ledger. |
+| Contributor preview | Lets the authenticated contributor edit or skip every claim. |
+| Import RPC | Enforces membership, contributor ownership, pack identity, and retry safety. |
+| Peer confirmation | Rejects self-review and review of an agent by that agent's owner. |
+| Reviewed record | Prevents edits and deletion; corrections create a new superseding record. |
+| Evidence Hash | Computes canonical SHA-256 input inside Postgres after peer review. |
+
+Contribution Packs are untrusted input. Evidence text remains inert even when it contains prompt-like instructions. Wallets, signatures, payments, tokens, and on-chain writes are outside this build.
+
+## OpenAI Build Week
+
+Ledger existed before the submission period as a manual contribution ledger with authentication, project membership, peer review, append-only reviewed rows, and non-binding discussion weights.
+
+The Build Week work added the portable Contribution Pack contract, deterministic parsing and actor checks, idempotent database import, imported-evidence display, Evidence Hash v3 coverage, and the installable Ledger Contribution plugin. The dated boundary is documented in [`docs/build-week-baseline.md`](docs/build-week-baseline.md).
+
+### How we collaborated with Codex
+
+Codex with GPT-5.6 was the main development environment for the Build Week increment. Codex helped inspect the competition rules, challenge an early Responses API plan, define the portable pack contract, write parser and provenance tests before implementation, pressure-test the Postgres trust boundary, package the workflow as a plugin, and run the release checks.
+
+The central product decision stayed human: AI may draft a contribution from evidence, but it cannot confirm its own work or turn discussion weights into legal ownership. The repository keeps the resulting decisions visible through dated plans, tests, migrations, and commits.
+
+## Test
+
+```bash
+npm test
+npm run typecheck
+npm run build
+```
+
+The current suite covers pack parsing, actor validation, provenance projection, claim preparation, scoring, superseding records, and retry conflicts. The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
+
+## Repository layout
+
+```text
+plugins/ledger-contribution/  Codex plugin, Skill, fixtures, and validator
+app/projects/[id]/import/     Contribution Pack preview and import flow
+lib/imports/                  Dependency-free parsing and validation
+supabase/migrations/          RLS, review, immutability, hashing, and import RPCs
+docs/                         Build Week boundary, plans, and test instructions
+```
+
+## Legal scope
+
+Ledger records contributions and produces non-binding discussion weights. It does not create, transfer, or determine equity, compensation, tokens, or other legal rights. Teams need separate legal documents and professional advice for any binding allocation.
+
+## License
+
+[MIT](LICENSE)

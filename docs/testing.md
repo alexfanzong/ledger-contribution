@@ -33,7 +33,7 @@ npm test
 
 ## Codex Plugin Contribution Pack Flow
 
-- Install `ledger-contribution@personal` from the repository marketplace and start a fresh Codex task.
+- Install **Ledger Contribution** from the `ledger` repository marketplace and start a fresh Codex task.
 - Invoke `$ledger-contribution-pack` with a bounded set of repository evidence.
 - Verify the generated JSON with `plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs`.
 - Sign in as User A and open **Import pack** for the matching project.
