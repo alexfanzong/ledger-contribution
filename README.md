@@ -16,6 +16,7 @@ Ledger turns a bounded set of work evidence into draft contribution claims. The 
 
 - An installable Codex plugin that creates a portable Contribution Pack from evidence you select.
 - An editable import screen that shows every claim and evidence reference before submission.
+- A deterministic Demo PM Agent that pre-verifies progress evidence without an API key.
 - Database-enforced peer confirmation. Contributors and agent owners cannot approve their own work.
 - Append-only reviewed records with idempotent imports and server-side evidence hashes.
 - Non-binding discussion weights for allocation conversations.
@@ -61,12 +62,15 @@ flowchart LR
     A["Selected work evidence"] --> B["Codex plugin"]
     B --> C["Contribution Pack"]
     C --> D["Contributor preview"]
-    D --> E["Pending review"]
-    E --> F["Different teammate"]
-    F --> G["Append-only record + Evidence Hash"]
+    D --> E["Demo PM Agent pre-verification"]
+    E --> F["Pending human review"]
+    F --> G["Different teammate"]
+    G --> H["Append-only record + Evidence Hash"]
 ```
 
 The plugin is a draft producer. It cannot choose a reviewer, set final impact, confirm a claim, or create an Evidence Hash. Ledger validates the pack again at the web and database boundaries.
+
+The Demo PM Agent applies a small published policy to the validated pack: linked evidence must resolve, code claims need test evidence, and unresolved uncertainty stays visible. It returns `Agent Verified`, `Needs Review`, or `Insufficient Evidence`. This is advisory progress checking, not final approval; it uses no live model call and a teammate must still review attribution and impact.
 
 The import RPC binds a human claim to the authenticated member, or an agent claim to an agent that member owns. A project-level pack identity plus a claim-level identity makes concurrent retries resolve to one contribution.
 
@@ -94,9 +98,10 @@ The product flow is:
 1. Create a project and invite another member.
 2. Add a milestone or register an agent contributor.
 3. Import a Contribution Pack or enter a contribution manually.
-4. Have a different member confirm, partially confirm, or reject the pending record.
-5. Inspect the confirmed record and its Evidence Hash in the ledger.
-6. Use the simulation page as a non-binding discussion view.
+4. Inspect the automatic Demo PM Agent pre-verification.
+5. Have a different member confirm, partially confirm, or reject the pending record.
+6. Inspect the confirmed record and its Evidence Hash in the ledger.
+7. Use the simulation page as a non-binding discussion view.
 
 ## Trust model
 
@@ -105,6 +110,7 @@ The product flow is:
 | Codex plugin | Produces draft claims from bounded evidence and writes no data to Ledger. |
 | Contributor preview | Lets the authenticated contributor edit or skip every claim. |
 | Import RPC | Enforces membership, contributor ownership, pack identity, and retry safety. |
+| Demo PM Agent | Stores a versioned, idempotent evidence assessment; clients receive read access only. |
 | Peer confirmation | Rejects self-review and review of an agent by that agent's owner. |
 | Reviewed record | Prevents edits and deletion; corrections create a new superseding record. |
 | Evidence Hash | Computes canonical SHA-256 input inside Postgres after peer review. |
@@ -115,13 +121,13 @@ Contribution Packs are untrusted input. Evidence text remains inert even when it
 
 Ledger existed before the submission period as a manual contribution ledger with authentication, project membership, peer review, append-only reviewed rows, and non-binding discussion weights.
 
-The Build Week work added the portable Contribution Pack contract, deterministic parsing and actor checks, idempotent database import, imported-evidence display, Evidence Hash v3 coverage, and the installable Ledger Contribution plugin. The dated boundary is documented in [`docs/build-week-baseline.md`](docs/build-week-baseline.md).
+The Build Week work added the portable Contribution Pack contract, deterministic parsing and actor checks, idempotent database import, imported-evidence display, Evidence Hash v3 coverage, the installable Ledger Contribution plugin, and the no-API-key Demo PM Agent pre-verification layer. The dated boundary is documented in [`docs/build-week-baseline.md`](docs/build-week-baseline.md).
 
 ### How we collaborated with Codex
 
 Codex with GPT-5.6 was the main development environment for the Build Week increment. Codex helped inspect the competition rules, challenge an early Responses API plan, define the portable pack contract, write parser and provenance tests before implementation, pressure-test the Postgres trust boundary, package the workflow as a plugin, and run the release checks.
 
-The central product decision stayed human: AI may draft a contribution from evidence, but it cannot confirm its own work or turn discussion weights into legal ownership. The repository keeps the resulting trust boundaries visible through tests, migrations, and commits.
+The central product decision stayed human: an agent may draft a contribution and pre-verify whether selected evidence supports progress, but it cannot perform final confirmation or turn discussion weights into legal ownership. The repository keeps the resulting trust boundaries visible through tests, migrations, and commits.
 
 ## Test
 
@@ -131,7 +137,11 @@ npm run typecheck
 npm run build
 ```
 
-The current suite covers pack parsing, actor validation, provenance projection, claim preparation, scoring, superseding records, and retry conflicts. The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
+The current suite covers pack parsing, actor validation, provenance projection, claim preparation, PM Agent policy and migration permissions, scoring, superseding records, and retry conflicts. The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
+
+## Production data durability
+
+Supabase Free projects may pause after a week of low activity and provide a 90-day one-click restore window. That is acceptable for development, but not for a public production service. Before launch, move the production organization to Supabase Pro so inactivity does not pause the project and daily database backups are retained for seven days. Keep migrations in Git and schedule an independent logical database export. Point-in-Time Recovery is a later add-on for a stricter recovery objective, not a Build Week requirement. See Supabase's official [project pausing](https://supabase.com/docs/guides/platform/free-project-pausing), [database backups](https://supabase.com/docs/guides/platform/backups), and [production checklist](https://supabase.com/docs/guides/deployment/going-into-prod).
 
 ## Repository layout
 

@@ -36,6 +36,10 @@ npm test
 - Sign in as User A and open **Import pack** for the matching project.
 - Upload or paste the JSON and confirm the preview shows only the selected evidence.
 - Edit a claim and submit it. Verify it appears as `pending_review` and shows pack id, claim id, evidence refs, and pack hash.
+- Verify the import preview shows the deterministic Demo PM Agent result and states that human confirmation remains required.
+- Verify the stored review-page assessment shows `pm-demo-v1`, ordered checks, and an input fingerprint after import.
+- For a code claim with linked test evidence and no uncertainty, verify the result is `Agent Verified`.
+- For a claim with uncertainty, verify the result is `Needs Review`. For a code claim without linked test evidence, verify the result is `Insufficient Evidence`.
 - Submit the same unchanged claim again. Verify only one contribution row exists and the existing id is returned.
 - Change imported claim content while reusing the same pack and claim ids. Verify `IMPORT_IDENTITY_CONFLICT` is rejected and no second row is created.
 - As User B, confirm the contribution. Verify Evidence Hash v3 is generated and the imported provenance remains visible.
@@ -54,6 +58,10 @@ npm test
 - Import attribution: call `import_contribution_pack_claim` with another member's display name or an unowned agent id and verify `IMPORT_MEMBER_MISMATCH` or `IMPORT_AGENT_NOT_OWNED`.
 - Provenance immutability: attempt to update any `import_*` column on a pending imported row and verify the trigger rejects it.
 - RPC-only provenance: attempt a direct insert with `import_pack_id` and verify the trigger requires `import_contribution_pack_claim`.
+- PM assessment write denial: attempt a direct insert, update, and delete on `contribution_agent_verifications` as an authenticated member and verify RLS/grants reject each mutation.
+- PM assessment idempotency: repeat the same import and verify only one row exists for the same contribution, `pm-demo-v1`, and input fingerprint.
+- PM/human separation: verify the PM import wrapper never sets `reviewer_member_id`, `final_impact`, `confirmed_at`, `evidence_hash`, or `evidence_hash_version`.
+- PM prompt isolation: include prompt-like text in an evidence summary and verify it remains display text without changing the PM decision policy.
 
 ## Legal Copy Check
 

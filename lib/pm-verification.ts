@@ -114,9 +114,9 @@ export function assessPmClaim(input: PmAssessmentInput): PmAssessmentResult {
   ]
 
   let decision: PmVerificationDecision
-  if (!hasEvidence) {
+  if (!hasEvidence || !verificationEvidenceSatisfied) {
     decision = "insufficient_evidence"
-  } else if (!referencesResolved || !uncertaintyClear || !verificationEvidenceSatisfied) {
+  } else if (!referencesResolved || !uncertaintyClear) {
     decision = "needs_review"
   } else {
     decision = "agent_verified"

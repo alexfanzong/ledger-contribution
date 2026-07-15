@@ -81,6 +81,13 @@ export function PmAgentVerification({
               Input fingerprint: {verification.input_fingerprint.slice(0, 18)}
             </p>
           ) : null}
+          {verification.evaluated_at ? (
+            <p className="text-[11px] opacity-75">
+              Evaluated: {new Date(verification.evaluated_at).toLocaleString("en-US", {
+                timeZone: "UTC",
+              })} UTC
+            </p>
+          ) : null}
         </div>
       </details>
     </section>
