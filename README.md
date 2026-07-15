@@ -121,7 +121,7 @@ The Build Week work added the portable Contribution Pack contract, deterministic
 
 Codex with GPT-5.6 was the main development environment for the Build Week increment. Codex helped inspect the competition rules, challenge an early Responses API plan, define the portable pack contract, write parser and provenance tests before implementation, pressure-test the Postgres trust boundary, package the workflow as a plugin, and run the release checks.
 
-The central product decision stayed human: AI may draft a contribution from evidence, but it cannot confirm its own work or turn discussion weights into legal ownership. The repository keeps the resulting decisions visible through dated plans, tests, migrations, and commits.
+The central product decision stayed human: AI may draft a contribution from evidence, but it cannot confirm its own work or turn discussion weights into legal ownership. The repository keeps the resulting trust boundaries visible through tests, migrations, and commits.
 
 ## Test
 
@@ -140,7 +140,7 @@ plugins/ledger-contribution/  Codex plugin, Skill, fixtures, and validator
 app/projects/[id]/import/     Contribution Pack preview and import flow
 lib/imports/                  Dependency-free parsing and validation
 supabase/migrations/          RLS, review, immutability, hashing, and import RPCs
-docs/                         Build Week boundary, plans, and test instructions
+docs/                         Build Week boundary and public test instructions
 ```
 
 ## Legal scope
