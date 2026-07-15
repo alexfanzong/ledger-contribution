@@ -75,6 +75,23 @@ export type CategoryWeight = {
   weight: number;
 };
 
+export type ContributionAgentVerification = {
+  id: string;
+  project_id: string;
+  contribution_id: string;
+  decision: "agent_verified" | "needs_review" | "insufficient_evidence";
+  policy_version: "pm-demo-v1";
+  verifier_kind: "deterministic_demo_pm_agent";
+  checks: Array<{
+    id: "evidence_linked" | "references_resolved" | "verification_evidence" | "uncertainty_clear";
+    passed: boolean;
+    explanation: string;
+  }>;
+  summary: string;
+  input_fingerprint: string;
+  evaluated_at: string;
+};
+
 export const CONTRIBUTION_CATEGORIES = [
   "code",
   "architecture",
