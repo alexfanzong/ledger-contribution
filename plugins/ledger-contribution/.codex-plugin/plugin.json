@@ -1,6 +1,6 @@
 {
   "name": "ledger-contribution",
-  "version": "0.2.0+codex.20260716111109",
+  "version": "0.2.1+codex.20260716085047",
   "description": "Turn selected human-agent work into evidence-bound contribution drafts for peer confirmation in Ledger.",
   "author": {
     "name": "Alex Fan",
@@ -34,7 +34,7 @@
       "Draft evidence-bound claims for work I explicitly select."
     ],
     "brandColor": "#65084F",
-    "composerIcon": "./assets/logo.png",
+    "composerIcon": "./assets/mcp-icon.png",
     "logo": "./assets/logo.png"
   }
 }
