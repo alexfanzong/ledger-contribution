@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -5,10 +6,18 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const serverPath = resolve(
+const pluginRoot = resolve(
   root,
-  "plugins/ledger-contribution/mcp/server.mjs"
+  "plugins/ledger-contribution"
 );
+const mcpConfig = JSON.parse(
+  await readFile(resolve(pluginRoot, ".mcp.json"), "utf8")
+);
+const server = mcpConfig.mcpServers?.["ledger-contribution"];
+
+if (!server || server.type !== "stdio") {
+  throw new Error("Plugin .mcp.json must declare the ledger-contribution stdio server");
+}
 
 const pack = {
   schema_version: "1.0",
@@ -46,8 +55,9 @@ const pack = {
 };
 
 const transport = new StdioClientTransport({
-  command: "node",
-  args: [serverPath]
+  command: server.command,
+  args: server.args,
+  cwd: resolve(pluginRoot, server.cwd ?? ".")
 });
 const client = new Client({ name: "ledger-mcp-smoke-test", version: "0.1.0" });
 
