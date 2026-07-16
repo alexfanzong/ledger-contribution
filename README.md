@@ -111,7 +111,10 @@ Set these values in `.env.local`:
 ```text
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
+
+Set `NEXT_PUBLIC_SITE_URL` to the deployed HTTPS origin in production. Ledger uses it for account-confirmation and password-recovery callbacks; the fallback request origin must match the request host.
 
 Apply the files in `supabase/migrations/` to a test Supabase project in timestamp order. The migrations create the schema, Row Level Security policies, immutable-review triggers, evidence hashing functions, and the Contribution Pack import RPC.
 

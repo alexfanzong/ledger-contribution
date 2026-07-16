@@ -4,7 +4,7 @@ import { ArrowLeft, LockKeyhole, ShieldCheck } from "lucide-react";
 import { AuthWorkflowPreview } from "@/components/auth-workflow-preview";
 import { BrandMark } from "@/components/brand-mark";
 import { Field, inputClass } from "@/components/ui";
-import { signIn, signUp } from "@/lib/actions";
+import { requestPasswordReset, signIn, signUp, updatePassword } from "@/lib/actions";
 import { getAuthMode, getFirstQueryValue } from "@/lib/auth-page";
 
 type AuthSearchParams = {
@@ -21,6 +21,24 @@ export default async function AuthPage({
   const params = await searchParams;
   const mode = getAuthMode(params.mode);
   const signingUp = mode === "signup";
+  const requestingReset = mode === "forgot";
+  const updatingPassword = mode === "reset";
+  const recovering = requestingReset || updatingPassword;
+
+  const heading = signingUp
+    ? "Create your team ledger."
+    : requestingReset
+      ? "Reset your password."
+      : updatingPassword
+        ? "Choose a new password."
+        : "Return to your team ledger.";
+  const description = signingUp
+    ? "Start recording human and agent contributions with a clear human confirmation boundary."
+    : requestingReset
+      ? "Enter your account email and Ledger will send a secure recovery link."
+      : updatingPassword
+        ? "Set a replacement password, then sign in again to continue."
+        : "Sign in to record work, review evidence, and confirm contributions with your team.";
 
   return (
     <main className="min-h-[calc(100vh-65px)] bg-ledger-canvas px-5 py-6 text-ledger-ink md:px-8 lg:py-9">
@@ -46,41 +64,47 @@ export default async function AuthPage({
                 Evidence infrastructure for AI-native teams
               </p>
               <h1 className="font-display mt-4 text-[2.55rem] leading-[1.05] tracking-[-0.02em] text-ledger-ink sm:text-5xl">
-                {signingUp ? "Create your team ledger." : "Return to your team ledger."}
+                {heading}
               </h1>
-              <p className="mt-4 text-sm leading-6 text-ledger-muted">
-                {signingUp
-                  ? "Start recording human and agent contributions with a clear human confirmation boundary."
-                  : "Sign in to record work, review evidence, and confirm contributions with your team."}
-              </p>
+              <p className="mt-4 text-sm leading-6 text-ledger-muted">{description}</p>
 
-              <nav
-                aria-label="Authentication mode"
-                className="mt-7 grid grid-cols-2 rounded-lg bg-ledger-panel p-1"
-              >
+              {recovering ? (
                 <Link
                   href="/auth"
-                  aria-current={!signingUp ? "page" : undefined}
-                  className={`focus-ring grid min-h-10 place-items-center rounded-md text-sm font-semibold transition ${
-                    !signingUp
-                      ? "bg-white text-plum-800 shadow-sm"
-                      : "text-ledger-muted hover:text-ledger-ink"
-                  }`}
+                  className="focus-ring mt-7 inline-flex min-h-10 items-center text-sm font-semibold text-plum-800 hover:text-plum-950"
                 >
-                  Sign in
+                  <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Back to sign in
                 </Link>
-                <Link
-                  href="/auth?mode=signup"
-                  aria-current={signingUp ? "page" : undefined}
-                  className={`focus-ring grid min-h-10 place-items-center rounded-md text-sm font-semibold transition ${
-                    signingUp
-                      ? "bg-white text-plum-800 shadow-sm"
-                      : "text-ledger-muted hover:text-ledger-ink"
-                  }`}
+              ) : (
+                <nav
+                  aria-label="Authentication mode"
+                  className="mt-7 grid grid-cols-2 rounded-lg bg-ledger-panel p-1"
                 >
-                  Create account
-                </Link>
-              </nav>
+                  <Link
+                    href="/auth"
+                    aria-current={!signingUp ? "page" : undefined}
+                    className={`focus-ring grid min-h-10 place-items-center rounded-md text-sm font-semibold transition ${
+                      !signingUp
+                        ? "bg-white text-plum-800 shadow-sm"
+                        : "text-ledger-muted hover:text-ledger-ink"
+                    }`}
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/auth?mode=signup"
+                    aria-current={signingUp ? "page" : undefined}
+                    className={`focus-ring grid min-h-10 place-items-center rounded-md text-sm font-semibold transition ${
+                      signingUp
+                        ? "bg-white text-plum-800 shadow-sm"
+                        : "text-ledger-muted hover:text-ledger-ink"
+                    }`}
+                  >
+                    Create account
+                  </Link>
+                </nav>
+              )}
 
               <div className="mt-6">
                 <AuthNotice
@@ -88,7 +112,61 @@ export default async function AuthPage({
                   message={getFirstQueryValue(params.message)}
                 />
 
-                {signingUp ? (
+                {requestingReset ? (
+                  <form action={requestPasswordReset} className="mt-5 grid gap-4">
+                    <Field label="Account email">
+                      <input
+                        className={inputClass}
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@company.com"
+                        required
+                      />
+                    </Field>
+                    <button className="focus-ring mt-1 min-h-12 rounded-md bg-plum-800 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-900">
+                      Send reset link
+                    </button>
+                    <p className="text-xs leading-5 text-ledger-muted">
+                      For privacy, Ledger shows the same confirmation whether or not the email is
+                      registered.
+                    </p>
+                  </form>
+                ) : updatingPassword ? (
+                  <form action={updatePassword} className="mt-5 grid gap-4">
+                    <Field label="New password">
+                      <input
+                        className={inputClass}
+                        name="password"
+                        type="password"
+                        minLength={6}
+                        autoComplete="new-password"
+                        placeholder="At least 6 characters"
+                        required
+                      />
+                    </Field>
+                    <Field label="Confirm new password">
+                      <input
+                        className={inputClass}
+                        name="password_confirmation"
+                        type="password"
+                        minLength={6}
+                        autoComplete="new-password"
+                        placeholder="Repeat your new password"
+                        required
+                      />
+                    </Field>
+                    <button className="focus-ring mt-1 min-h-12 rounded-md bg-plum-800 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-900">
+                      Update password
+                    </button>
+                    <Link
+                      href="/auth?mode=forgot"
+                      className="focus-ring min-h-8 text-center text-xs font-semibold text-plum-800 hover:text-plum-950"
+                    >
+                      Request another reset link
+                    </Link>
+                  </form>
+                ) : signingUp ? (
                   <form action={signUp} className="mt-5 grid gap-4">
                     <Field label="Display name">
                       <input
@@ -145,6 +223,14 @@ export default async function AuthPage({
                         required
                       />
                     </Field>
+                    <div className="-mt-1 text-right">
+                      <Link
+                        href="/auth?mode=forgot"
+                        className="focus-ring inline-flex min-h-8 items-center text-xs font-semibold text-plum-800 hover:text-plum-950"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
                     <button className="focus-ring mt-1 min-h-12 rounded-md bg-plum-800 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-900">
                       Sign in
                     </button>

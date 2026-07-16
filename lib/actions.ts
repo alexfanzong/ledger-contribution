@@ -1,9 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { buildAuthErrorPath } from "@/lib/auth-page";
+import {
+  buildAuthErrorPath,
+  buildAuthMessagePath,
+  buildPasswordRecoveryRedirect,
+  PASSWORD_RECOVERY_COOKIE,
+  resolveAuthOrigin,
+  validatePasswordUpdate
+} from "@/lib/auth-page";
 import { createClient } from "@/lib/supabase/server";
 import { parseContributionPackText } from "@/lib/imports/validate";
 import { prepareContributionClaimImport } from "@/lib/imports/prepare";
@@ -36,7 +43,16 @@ export async function signUp(formData: FormData) {
   const email = requiredString(formData, "email");
   const password = requiredString(formData, "password");
   const displayName = optionalString(formData, "display_name");
-  const origin = headerStore.get("origin") ?? "http://127.0.0.1:3001";
+  let origin: string;
+  try {
+    origin = resolveAuthOrigin({
+      configuredUrl: process.env.NEXT_PUBLIC_SITE_URL,
+      requestOrigin: headerStore.get("origin"),
+      requestHost: headerStore.get("x-forwarded-host") ?? headerStore.get("host")
+    });
+  } catch {
+    redirect(buildAuthErrorPath("signup", "Unable to create a secure confirmation link."));
+  }
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -55,6 +71,75 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const supabase = await createClient();
+  const headerStore = await headers();
+  const email = requiredString(formData, "email");
+
+  let redirectTo: string;
+  try {
+    const origin = resolveAuthOrigin({
+      configuredUrl: process.env.NEXT_PUBLIC_SITE_URL,
+      requestOrigin: headerStore.get("origin"),
+      requestHost: headerStore.get("x-forwarded-host") ?? headerStore.get("host")
+    });
+    redirectTo = buildPasswordRecoveryRedirect(origin);
+  } catch {
+    redirect(buildAuthErrorPath("forgot", "Unable to create a secure recovery link."));
+  }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error) {
+    redirect(
+      buildAuthErrorPath("forgot", "Unable to send a reset email right now. Please try again.")
+    );
+  }
+
+  redirect(
+    buildAuthMessagePath(
+      "forgot",
+      "If an account exists for that email, a password reset link has been sent."
+    )
+  );
+}
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const password = String(formData.get("password") ?? "");
+  const confirmation = String(formData.get("password_confirmation") ?? "");
+  const validationError = validatePasswordUpdate(password, confirmation);
+
+  if (validationError) redirect(buildAuthErrorPath("reset", validationError));
+
+  if (cookieStore.get(PASSWORD_RECOVERY_COOKIE)?.value !== "verified") {
+    redirect(
+      buildAuthErrorPath(
+        "forgot",
+        "Open the password reset link from your email before choosing a new password."
+      )
+    );
+  }
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    cookieStore.delete(PASSWORD_RECOVERY_COOKIE);
+    redirect(
+      buildAuthErrorPath(
+        "forgot",
+        "This password reset link is invalid or expired. Request a new link."
+      )
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) redirect(buildAuthErrorPath("reset", error.message));
+
+  cookieStore.delete(PASSWORD_RECOVERY_COOKIE);
+  await supabase.auth.signOut();
+  redirect(buildAuthMessagePath("signin", "Password updated. Sign in with your new password."));
 }
 
 export async function createProject(formData: FormData) {
