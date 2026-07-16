@@ -1,4 +1,5 @@
-import { readFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,10 +7,13 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const pluginRoot = resolve(
+const sourcePluginRoot = resolve(
   root,
   "plugins/ledger-contribution"
 );
+const isolatedRoot = await mkdtemp(resolve(tmpdir(), "ledger-plugin-install-"));
+const pluginRoot = resolve(isolatedRoot, "ledger-contribution");
+await cp(sourcePluginRoot, pluginRoot, { recursive: true });
 const mcpConfig = JSON.parse(
   await readFile(resolve(pluginRoot, ".mcp.json"), "utf8")
 );
@@ -94,4 +98,5 @@ try {
   console.log("Ledger MCP smoke test passed (3 tools, stdio transport).")
 } finally {
   await client.close();
+  await rm(isolatedRoot, { recursive: true, force: true });
 }

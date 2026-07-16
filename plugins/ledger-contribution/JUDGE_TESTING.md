@@ -1,8 +1,10 @@
 # Judge testing — Ledger Contribution Plugin
 
-These cases exercise the plugin without requiring a rebuild or an OpenAI API key. Run them in a fresh Codex task after installing the repository marketplace.
+These cases exercise the installed bundle without requiring an OpenAI API key. Run them in a fresh Codex task after installing the repository marketplace.
 
-Before the interactive cases, run `npm run mcp:test`. It must list all three Ledger MCP tools and pass both the bundled stdio and stateless `/mcp` HTTP transport checks.
+Repository maintainers should run `npm run mcp:test` before publishing. It rebuilds the standalone bundle, copies the plugin into an isolated temporary install directory, then verifies all three tools over stdio plus the optional stateless `/mcp` HTTP transport. Judges using the installed plugin can begin directly with the interactive cases below.
+
+For the fastest reviewer-facing demo, use `skills/ledger-contribution-pack/references/judge-pack.fixture.json`. Create a project named **Ledger Build Week Demo** while signed in as a member whose display name is **Alex Rivera**. The three claims intentionally produce `Agent Verified`, `Needs Review`, and `Insufficient Evidence` in that order.
 
 ## Five positive cases
 
@@ -42,6 +44,6 @@ Before the interactive cases, run `npm run mcp:test`. It must list all three Led
 
 ## Ledger handoff
 
-For the end-to-end demo, create a Ledger project whose name matches the template pack and import the valid pack. The import preview and review page show the deterministic Demo PM Agent result; unresolved uncertainty remains visible in full. The contributor can edit and submit a claim only as themselves or an agent they own. The row must remain `pending_review` until a different authenticated member confirms it. Only then does Postgres create Evidence Hash v3.
+For the end-to-end demo, create a Ledger project whose name and contributor display name match the judge fixture and import it. The import preview and review page show all three deterministic Demo PM Agent results; unresolved uncertainty remains visible in full. The contributor can edit and submit a claim only as themselves or an agent they own. Every imported row must remain `pending_review` until a different authenticated member confirms it. Only then does Postgres create Evidence Hash v3.
 
 The one-click sample project predates the Build Week import path and does not seed PM Agent assessments. Judges should use the validated Contribution Pack flow above so the demo exercises the real import RPC and assessment boundary.

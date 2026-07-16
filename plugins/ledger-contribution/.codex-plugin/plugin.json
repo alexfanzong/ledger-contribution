@@ -1,6 +1,6 @@
 {
   "name": "ledger-contribution",
-  "version": "0.2.0",
+  "version": "0.2.0+codex.20260716111109",
   "description": "Turn selected human-agent work into evidence-bound contribution drafts for peer confirmation in Ledger.",
   "author": {
     "name": "Alex Fan",

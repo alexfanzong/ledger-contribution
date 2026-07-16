@@ -24,3 +24,6 @@ coverage
 /docs/validation-run-*.md
 /docs/superpowers/
 /design-qa.md
+
+# Contribution Packs can contain private team evidence and are local working files.
+/ledger-contribution-pack.json
