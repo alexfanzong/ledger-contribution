@@ -23,8 +23,9 @@ The following migrations have not been applied to the remote Supabase project in
 2. `20260704001000_canonical_json_v2.sql`
 3. `20260715000000_contribution_pack_import.sql`
 4. `20260715010000_pm_agent_verification.sql`
+5. `20260715020000_pm_agent_review_hardening.sql`
 
-Apply them in order only after confirming the remote contains test data only and receiving user approval. The third migration adds the idempotent import RPC, immutable provenance fields, and canonical Evidence Hash v3. The fourth adds read-only, idempotent PM Agent assessments inside the import boundary.
+Apply them in order only after confirming the remote contains test data only and receiving user approval. The third migration adds the idempotent import RPC, immutable provenance fields, and canonical Evidence Hash v3. The fourth adds read-only, idempotent PM Agent assessments inside the import boundary. The fifth independently validates evidence content at the database boundary and persists reviewer-facing uncertainty beside the advisory assessment.
 
 ## Trust Boundary
 

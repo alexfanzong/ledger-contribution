@@ -11,6 +11,7 @@ import {
   resolveAuthOrigin,
   validatePasswordUpdate
 } from "@/lib/auth-page";
+import { publicReviewError } from "@/lib/action-errors";
 import { createClient } from "@/lib/supabase/server";
 import { parseContributionPackText } from "@/lib/imports/validate";
 import { prepareContributionClaimImport } from "@/lib/imports/prepare";
@@ -317,7 +318,11 @@ export async function reviewContribution(formData: FormData) {
     p_review_note: reviewNote
   });
 
-  if (error) redirect(`/projects/${projectId}/review?error=${encodeURIComponent(error.message)}`);
+  if (error) {
+    redirect(
+      `/projects/${projectId}/review?error=${encodeURIComponent(publicReviewError(error.message))}`
+    );
+  }
   revalidatePath(`/projects/${projectId}/ledger`);
   revalidatePath(`/projects/${projectId}/review`);
   revalidatePath(`/projects/${projectId}/simulation`);

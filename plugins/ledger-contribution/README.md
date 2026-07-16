@@ -23,7 +23,7 @@ The plugin does not confirm its own claims. It creates a versioned Contribution 
 Register the public marketplace:
 
 ```bash
-codex plugin marketplace add https://github.com/alexfanzong/ledger-contribution
+codex plugin marketplace add alexfanzong/ledger-contribution --ref main
 ```
 
 Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task so Codex loads the bundled Skill and MCP tools.

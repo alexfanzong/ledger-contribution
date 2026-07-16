@@ -33,6 +33,7 @@ npm test
 - Install **Ledger Contribution** from the `ledger` repository marketplace and start a fresh Codex task.
 - Invoke `$ledger-contribution-pack` with a bounded set of repository evidence.
 - Verify the generated JSON with `plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs`.
+- For the fixed judge path, create **Ledger Build Week Demo** as member **Alex Rivera** and use `plugins/ledger-contribution/skills/ledger-contribution-pack/references/judge-pack.fixture.json`; its three claims must preview all three PM Agent outcomes in order.
 - Sign in as User A and open **Import pack** for the matching project.
 - Upload or paste the JSON and confirm the preview shows only the selected evidence.
 - Edit a claim and submit it. Verify it appears as `pending_review` and shows pack id, claim id, evidence refs, and pack hash.

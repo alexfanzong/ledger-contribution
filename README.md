@@ -29,7 +29,7 @@ Ledger supports the Codex desktop app on macOS and Windows, Codex CLI, and the C
 Register the marketplace:
 
 ```bash
-codex plugin marketplace add https://github.com/alexfanzong/ledger-contribution
+codex plugin marketplace add alexfanzong/ledger-contribution --ref main
 ```
 
 Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task after installation so Codex loads the bundled Skill and MCP tools.
@@ -53,6 +53,8 @@ Codex writes `ledger-contribution-pack.json` unless you choose another path. Val
 ```bash
 node plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validate-pack.mjs ledger-contribution-pack.json
 ```
+
+For a deterministic judge demo, the plugin includes [`judge-pack.fixture.json`](plugins/ledger-contribution/skills/ledger-contribution-pack/references/judge-pack.fixture.json). Its three claims exercise `Agent Verified`, `Needs Review`, and `Insufficient Evidence` without an API key.
 
 The plugin reads only the commits, files, tests, deliverables, summaries, and time range you place in scope. It does not scan Codex account history, environment variables, credentials, unrelated folders, or the rest of your computer.
 

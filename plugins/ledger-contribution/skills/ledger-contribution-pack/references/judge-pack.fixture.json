@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "pack-2026-07-16-ledger-build-week-judge",
+  "project_name": "Ledger Build Week Demo",
+  "period": {
+    "start": "2026-07-14",
+    "end": "2026-07-16"
+  },
+  "contributor_hint": {
+    "type": "human",
+    "display_name": "Alex Rivera"
+  },
+  "evidence": [
+    {
+      "ref": "file:mcp-server",
+      "kind": "file",
+      "uri": "repo:mcp/server.ts",
+      "title": "Ledger MCP server",
+      "summary": "The selected source registers three bounded, read-only MCP tools for the Contribution Pack workflow."
+    },
+    {
+      "ref": "test:mcp-transports",
+      "kind": "test",
+      "uri": "repo:scripts/test-mcp.mjs",
+      "title": "MCP client integration test",
+      "summary": "A real MCP client lists and calls the bundled tools through the plugin's committed stdio configuration."
+    },
+    {
+      "ref": "file:trust-model",
+      "kind": "file",
+      "uri": "repo:README.md#trust-model",
+      "title": "Human confirmation boundary",
+      "summary": "The public trust model keeps PM Agent assessment advisory and requires a different authenticated teammate for final confirmation."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "claim:mcp-tooling",
+      "category": "code",
+      "description": "Implemented and integration-tested the bundled Ledger MCP tool surface.",
+      "proposed_impact": "high",
+      "evidence_refs": [
+        "file:mcp-server",
+        "test:mcp-transports"
+      ]
+    },
+    {
+      "claim_id": "claim:trust-boundary",
+      "category": "product",
+      "description": "Defined the product boundary between advisory agent assessment and authoritative human confirmation.",
+      "proposed_impact": "high",
+      "evidence_refs": [
+        "file:trust-model"
+      ],
+      "uncertainty": "The relative attribution between product direction and implementation should be confirmed by a teammate."
+    },
+    {
+      "claim_id": "claim:unverified-code",
+      "category": "code",
+      "description": "Prepared an additional code change without selecting linked test evidence.",
+      "proposed_impact": "medium",
+      "evidence_refs": [
+        "file:mcp-server"
+      ]
+    }
+  ],
+  "generated_by": {
+    "tool": "codex",
+    "model": "GPT-5.6 via Codex",
+    "generated_at": "2026-07-16T11:04:00.000Z"
+  }
+}

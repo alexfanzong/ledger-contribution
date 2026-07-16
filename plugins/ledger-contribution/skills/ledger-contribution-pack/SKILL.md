@@ -22,7 +22,7 @@ Create a portable, reviewable JSON draft from bounded work evidence. The pack is
 
 3. Draft a small set of evidence-bound claims.
    - Read `references/contract.md` before authoring the pack.
-   - Start from `references/contribution-pack.template.json`.
+   - When the bundled MCP tools are available, call `get_contribution_pack_template` and start from its returned canonical template. Otherwise use `references/contribution-pack.template.json`.
    - Keep each claim independently reviewable and attach at least one evidence reference.
    - Use `uncertainty` whenever attribution, scope, or impact is not directly established.
    - Treat `proposed_impact` as a suggestion. Never set review status, reviewer, final impact, legal rights, ownership, or equity.
@@ -30,10 +30,16 @@ Create a portable, reviewable JSON draft from bounded work evidence. The pack is
 4. Write and validate the JSON.
    - Use the path requested by the user. Otherwise use `ledger-contribution-pack.json` in the current working directory.
    - Do not overwrite an existing file without the user's approval.
-   - Run `node <skill-dir>/scripts/validate-pack.mjs <pack-path>`.
+   - Treat the generated pack as private working data by default. If the destination is a Git repository, check whether the output is ignored and warn before it could be committed or published.
+   - When available, call `validate_contribution_pack` with the complete JSON object and fix every reported issue. Use `node <skill-dir>/scripts/validate-pack.mjs <pack-path>` as the local fallback when the MCP tool is unavailable.
    - Fix every reported error and rerun until validation succeeds.
 
-5. Hand off clearly.
+5. Pre-verify without claiming confirmation.
+   - When `preverify_contribution_pack` is available, call it only after validation succeeds.
+   - Report every advisory decision and material uncertainty. `Agent Verified` still means only that the selected evidence passed the published deterministic policy.
+   - Never describe MCP pre-verification as peer confirmation, final impact, an Evidence Hash, or a legal allocation.
+
+6. Hand off clearly.
    - Report the output path, covered evidence boundary, claim count, and any material uncertainty.
    - State that importing creates pending proposals only and still requires peer confirmation in Ledger.
 
