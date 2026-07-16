@@ -2,6 +2,8 @@
 
 These cases exercise the plugin without requiring a rebuild or an OpenAI API key. Run them in a fresh Codex task after installing the repository marketplace.
 
+Before the interactive cases, run `npm run mcp:test`. It must list all three Ledger MCP tools and pass both the bundled stdio and stateless `/mcp` HTTP transport checks.
+
 ## Five positive cases
 
 1. **Selected commits**

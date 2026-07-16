@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ledger-contribution": {
+      "type": "stdio",
+      "cwd": ".",
+      "command": "node",
+      "args": ["./mcp/server.mjs"]
+    }
+  }
+}
