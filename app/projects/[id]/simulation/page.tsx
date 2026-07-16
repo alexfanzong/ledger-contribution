@@ -44,9 +44,9 @@ export default async function SimulationPage({ params }: { params: Promise<{ id:
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <Panel title="Discussion Weight">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-sm">
+            <table className="ledger-table min-w-[560px]">
               <thead>
-                <tr className="border-b border-line text-left text-muted">
+                <tr>
                   <th className="py-2 pr-3">Contributor</th>
                   <th className="py-2 pr-3">Labor points</th>
                   <th className="py-2 pr-3">Records</th>
@@ -55,7 +55,7 @@ export default async function SimulationPage({ params }: { params: Promise<{ id:
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.key} className="border-b border-line">
+                  <tr key={row.key}>
                     <td className="py-3 pr-3 font-medium">{row.label}</td>
                     <td className="py-3 pr-3">{row.points.toFixed(1)}</td>
                     <td className="py-3 pr-3">{row.contributions}</td>
@@ -69,9 +69,9 @@ export default async function SimulationPage({ params }: { params: Promise<{ id:
 
         <Panel title="Scored contribution records">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-sm">
+            <table className="ledger-table min-w-[720px]">
               <thead>
-                <tr className="border-b border-line text-left text-muted">
+                <tr>
                   <th className="py-2 pr-3">Contribution</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2 pr-3">Impact</th>

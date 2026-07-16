@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "@/lib/actions";
 import { Button } from "@/components/ui";
 
 export function ProjectNav({ projectId }: { projectId: string }) {
+  const pathname = usePathname();
   const items = [
     ["Overview", `/projects/${projectId}`],
     ["Members", `/projects/${projectId}/members`],
@@ -14,16 +18,27 @@ export function ProjectNav({ projectId }: { projectId: string }) {
   ];
 
   return (
-    <nav className="flex flex-wrap gap-2 text-sm">
-      {items.map(([label, href]) => (
-        <Link
-          key={href}
-          href={href}
-          className="rounded-md border border-line bg-white px-3 py-2 font-medium text-muted transition hover:text-ink"
-        >
-          {label}
-        </Link>
-      ))}
+    <nav aria-label="Project workspace" className="max-w-full overflow-x-auto rounded-lg border border-ledger-line bg-ledger-panel p-1">
+      <div className="flex min-w-max gap-1 text-[13px]">
+        {items.map(([label, href]) => {
+          const isActive = pathname === href || (href !== `/projects/${projectId}` && pathname.startsWith(`${href}/`));
+
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive ? "page" : undefined}
+              className={`focus-ring whitespace-nowrap rounded-md px-3 py-2 font-semibold transition ${
+                isActive
+                  ? "bg-white text-plum-800 shadow-sm"
+                  : "text-ledger-muted hover:bg-white/70 hover:text-ledger-ink"
+              }`}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

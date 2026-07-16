@@ -94,7 +94,7 @@ export default async function MembersPage({
                   <input className={inputClass} name="agent_type" placeholder="research, coding, analyst" />
                 </Field>
                 <SubmitButton
-                  className="focus-ring min-h-10 rounded-md bg-ink px-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+                  className="focus-ring min-h-10 rounded-md bg-plum-700 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-800 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={!currentMember}
                   pendingLabel="Registering..."
                 >
@@ -119,7 +119,7 @@ export default async function MembersPage({
               </select>
             </Field>
             <SubmitButton
-              className="focus-ring min-h-10 rounded-md bg-ink px-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+              className="focus-ring min-h-10 rounded-md bg-plum-700 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-800 disabled:cursor-not-allowed disabled:opacity-50"
               pendingLabel="Creating..."
             >
               Create invitation
