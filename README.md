@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/brand/ledger-team-logo.png" alt="Ledger logo" width="260" />
+  <img src="public/brand/ledger-logo-wine.png" alt="Ledger logo" width="260" />
 
   # Ledger
 
@@ -15,6 +15,7 @@ Ledger turns a bounded set of work evidence into draft contribution claims. The 
 ## What you get
 
 - An installable Codex plugin that creates a portable Contribution Pack from evidence you select.
+- A bundled MCP server with read-only tools for templates, deterministic validation, and PM Agent pre-verification over stdio or Streamable HTTP.
 - An editable import screen that shows every claim and evidence reference before submission.
 - A deterministic Demo PM Agent that pre-verifies progress evidence without an API key.
 - Database-enforced peer confirmation. Contributors and agent owners cannot approve their own work.
@@ -31,7 +32,7 @@ Register the marketplace:
 codex plugin marketplace add https://github.com/alexfanzong/ledger-contribution
 ```
 
-Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task after installation so Codex loads the bundled Skill.
+Open Codex, enter `/plugins`, choose the **Ledger** marketplace, and install **Ledger Contribution**. Start a new task after installation so Codex loads the bundled Skill and MCP tools.
 
 For local plugin development, register the cloned checkout instead:
 
@@ -54,6 +55,27 @@ node plugins/ledger-contribution/skills/ledger-contribution-pack/scripts/validat
 ```
 
 The plugin reads only the commits, files, tests, deliverables, summaries, and time range you place in scope. It does not scan Codex account history, environment variables, credentials, unrelated folders, or the rest of your computer.
+
+## MCP tools
+
+The plugin bundles a standalone MCP server, so it can expose deterministic Ledger capabilities without an OpenAI API key or access to account credentials.
+
+| Tool | Purpose | Mutates data |
+| --- | --- | --- |
+| `get_contribution_pack_template` | Returns the canonical Contribution Pack 1.0 structure. | No |
+| `validate_contribution_pack` | Validates schema, references, dates, and bounded field limits. | No |
+| `preverify_contribution_pack` | Runs the published Demo PM Agent policy over every valid claim. | No |
+
+Installed Codex plugins launch the bundled stdio server through `plugins/ledger-contribution/.mcp.json`. For ChatGPT Developer Mode or MCP Inspector, the same bundle can expose a stateless Streamable HTTP endpoint at `/mcp`:
+
+```bash
+npm run mcp:test
+npm run mcp:start
+```
+
+The HTTP mode is a public demo boundary: requests are capped at 512 KB and 120 requests per minute per remote address. Keep private evidence on the bundled stdio transport; add authenticated tenancy before exposing private or write-capable tools over HTTP.
+
+The PM result remains advisory. MCP tools cannot choose a reviewer, confirm a contribution, assign final impact, create an Evidence Hash, or write to Supabase. Those actions stay behind Ledger authentication and database-enforced peer review.
 
 ## How it works
 
@@ -134,6 +156,7 @@ The central product decision stayed human: an agent may draft a contribution and
 
 ```bash
 npm test
+npm run mcp:test
 npm run typecheck
 npm run build
 ```

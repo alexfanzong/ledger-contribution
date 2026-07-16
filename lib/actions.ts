@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { buildAuthErrorPath } from "@/lib/auth-page";
 import { createClient } from "@/lib/supabase/server";
 import { parseContributionPackText } from "@/lib/imports/validate";
 import { prepareContributionClaimImport } from "@/lib/imports/prepare";
@@ -25,7 +26,7 @@ export async function signIn(formData: FormData) {
   const password = requiredString(formData, "password");
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) redirect(`/auth?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(buildAuthErrorPath("signin", error.message));
   redirect("/dashboard");
 }
 
@@ -46,7 +47,7 @@ export async function signUp(formData: FormData) {
     }
   });
 
-  if (error) redirect(`/auth?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(buildAuthErrorPath("signup", error.message));
   redirect("/auth?message=Check your email to confirm the account, then sign in.");
 }
 
