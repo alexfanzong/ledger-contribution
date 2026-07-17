@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               </p>
             </div>
             <p className="text-xs leading-5 text-ledger-muted">
-              This workspace supports non-binding discussion weight only; it does not create or allocate legal equity.
+              Evidence receipts appear after peer confirmation and remain available for later review.
             </p>
           </div>
         </Panel>

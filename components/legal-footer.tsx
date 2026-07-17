@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowUpRight, Github, Info } from "lucide-react";
+import { Info } from "lucide-react";
 
 import { BrandMark } from "@/components/brand-mark";
-import { FOOTER_LINK_GROUPS, LEDGER_REPOSITORY_URL } from "@/lib/footer";
+import { FOOTER_LINK_GROUPS } from "@/lib/footer";
 
 export const LEGAL_DISCLAIMER =
-  "This product does not create, transfer, or evidence legal equity ownership. Contribution records are for internal coordination and negotiation support only. Any actual equity, option, token, bonus, revenue-share, or founder agreement requires separate legal documentation, corporate approval, tax review, and applicable securities-law compliance.";
+  "Ledger records support internal coordination and non-binding discussion only. They do not create equity, tokens, compensation, or legal rights.";
 
 export function LegalFooter() {
   return (
@@ -24,17 +24,6 @@ export function LegalFooter() {
             Evidence infrastructure for human-agent teams. Turn selected work into
             reviewable contribution records without automating ownership decisions.
           </p>
-
-          <a
-            href={LEDGER_REPOSITORY_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="focus-ring mt-7 inline-flex min-h-11 items-center gap-3 rounded-full border border-white/20 px-4 text-sm font-medium text-white/80 transition hover:border-white/45 hover:text-white"
-          >
-            <Github className="h-4 w-4" aria-hidden="true" />
-            Open source on GitHub
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
         </div>
 
         <nav
@@ -80,7 +69,7 @@ export function LegalFooter() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto grid max-w-[1440px] gap-5 px-5 py-6 text-[11px] leading-5 text-white/45 md:px-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-10 xl:px-9">
-          <p className="whitespace-nowrap">© 2026 Ledger. MIT licensed.</p>
+          <p className="whitespace-nowrap">© 2026 Ledger.</p>
           <div className="flex gap-3">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-plum-400" aria-hidden="true" />
             <p>{LEGAL_DISCLAIMER}</p>

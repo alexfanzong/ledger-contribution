@@ -12,7 +12,7 @@ describe("public footer links", () => {
   it("contains only real routes, anchors, or https URLs", () => {
     const links = FOOTER_LINK_GROUPS.flatMap((group) => group.links);
 
-    expect(links.length).toBeGreaterThanOrEqual(8);
+    expect(links.length).toBeGreaterThanOrEqual(4);
     expect(links.every((link) => link.href !== "#")).toBe(true);
     expect(
       links.every(
@@ -22,15 +22,13 @@ describe("public footer links", () => {
     ).toBe(true);
   });
 
-  it("keeps the primary product and review paths discoverable", () => {
+  it("keeps the primary product paths discoverable", () => {
     const hrefs = FOOTER_LINK_GROUPS.flatMap((group) =>
       group.links.map((link) => link.href)
     );
 
-    expect(hrefs).toContain("/#workflow");
+    expect(hrefs).toContain("/");
+    expect(hrefs).toContain("/dashboard");
     expect(hrefs).toContain("/auth?mode=signup");
-    expect(hrefs).toContain(
-      `${LEDGER_REPOSITORY_URL}/blob/main/plugins/ledger-contribution/JUDGE_TESTING.md`
-    );
   });
 });
