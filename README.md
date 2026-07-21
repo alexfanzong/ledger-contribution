@@ -168,10 +168,6 @@ npm run build
 
 The current suite covers pack parsing, actor validation, provenance projection, claim preparation, PM Agent policy, defensive row parsing, scoring, superseding records, redirect safety, retry conflicts, and static migration contracts. The SQL contract tests inspect migration text; they do not replace applying the migrations to a real Supabase database and running the negative RLS/RPC checks in [`docs/testing.md`](docs/testing.md). The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
 
-## Production data durability
-
-Supabase Free projects may pause after a week of low activity and provide a 90-day one-click restore window. That is acceptable for development, but not for a public production service. Before launch, move the production organization to Supabase Pro so inactivity does not pause the project and daily database backups are retained for seven days. Keep migrations in Git and schedule an independent logical database export. Point-in-Time Recovery is a later add-on for a stricter recovery objective, not a Build Week requirement. See Supabase's official [project pausing](https://supabase.com/docs/guides/platform/free-project-pausing), [database backups](https://supabase.com/docs/guides/platform/backups), and [production checklist](https://supabase.com/docs/guides/deployment/going-into-prod).
-
 ## Repository layout
 
 ```text
