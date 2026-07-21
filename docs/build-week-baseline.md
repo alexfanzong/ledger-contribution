@@ -1,6 +1,6 @@
 # OpenAI Build Week Baseline
 
-- Baseline commit: `7ee0cbd`
+- Baseline commit: `87c47d6`
 - Baseline date: 2026-07-04
 - Submission-period development starts: 2026-07-14
 - Competition branch: `codex/openai-build-week-contribution-import`
