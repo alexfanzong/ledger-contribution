@@ -28,6 +28,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   if (projectError) throw new Error(projectError.message);
 
+  const recentContributions = (contributions as Contribution[] | null) ?? [];
+  const latestEvidenceHash = recentContributions.find((contribution) => contribution.evidence_hash)?.evidence_hash;
+
   return (
     <PageShell
       title={(project as Project).name}
@@ -35,51 +38,79 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       actions={<LinkButton href="/dashboard" variant="secondary">Dashboard</LinkButton>}
     >
       <ProjectNav projectId={id} />
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Panel title="Members">
-          <p className="text-3xl font-semibold">{(members as Member[] | null)?.length ?? 0}</p>
-          <p className="text-sm text-muted">Authenticated members and clearly labeled sample members.</p>
+      <div className="grid gap-3 lg:grid-cols-3">
+        <Panel title="Members" className="border-t-2 border-t-plum-700">
+          <p className="text-4xl font-semibold tracking-[-0.04em] text-ledger-ink">{(members as Member[] | null)?.length ?? 0}</p>
+          <p className="mt-2 text-xs leading-5 text-ledger-muted">Authenticated members and clearly labeled sample members.</p>
         </Panel>
-        <Panel title="Milestones">
-          <p className="text-3xl font-semibold">{(milestones as Milestone[] | null)?.length ?? 0}</p>
-          <p className="text-sm text-muted">Contribution scoring applies diminishing returns per milestone.</p>
+        <Panel title="Milestones" className="border-t-2 border-t-plum-400">
+          <p className="text-4xl font-semibold tracking-[-0.04em] text-ledger-ink">{(milestones as Milestone[] | null)?.length ?? 0}</p>
+          <p className="mt-2 text-xs leading-5 text-ledger-muted">Contribution scoring applies diminishing returns per milestone.</p>
         </Panel>
-        <Panel title="Confirmed records">
-          <p className="text-3xl font-semibold">{(contributions as Contribution[] | null)?.length ?? 0}</p>
-          <p className="text-sm text-muted">Confirmed or partial rows include a server-side Evidence Hash.</p>
+        <Panel title="Confirmed records" className="border-t-2 border-t-emerald-500">
+          <p className="text-4xl font-semibold tracking-[-0.04em] text-ledger-ink">{recentContributions.length}</p>
+          <p className="mt-2 text-xs leading-5 text-ledger-muted">Confirmed or partial rows include a server-side Evidence Hash.</p>
         </Panel>
       </div>
 
-      <Panel title="Recent confirmed contributions">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[780px] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-line text-left text-muted">
-                <th className="py-2 pr-3">Contribution</th>
-                <th className="py-2 pr-3">Contributor</th>
-                <th className="py-2 pr-3">Status</th>
-                <th className="py-2 pr-3">Impact</th>
-                <th className="py-2 pr-3">Evidence Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(contributions as Contribution[] | null)?.map((contribution) => (
-                <tr key={contribution.id} className="border-b border-line">
-                  <td className="py-3 pr-3">{contribution.description}</td>
-                  <td className="py-3 pr-3">{contribution.contributor_label}</td>
-                  <td className="py-3 pr-3">
-                    <StatusBadge status={contribution.status} sample={contribution.is_demo} />
-                  </td>
-                  <td className="py-3 pr-3">{contribution.final_impact ?? "n/a"}</td>
-                  <td className="py-3 pr-3 font-mono text-xs text-muted">
-                    {contribution.evidence_hash?.slice(0, 16) ?? "pending"}
-                  </td>
+      <div className="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_minmax(260px,0.55fr)]">
+        <Panel title="Recent confirmed contributions">
+          <div className="overflow-x-auto">
+            <table className="ledger-table min-w-[780px]">
+              <thead>
+                <tr>
+                  <th>Contribution</th>
+                  <th>Contributor</th>
+                  <th>Status</th>
+                  <th>Impact</th>
+                  <th>Evidence Hash</th>
                 </tr>
-              )) ?? null}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
+              </thead>
+              <tbody>
+                {recentContributions.length ? (
+                  recentContributions.map((contribution) => (
+                    <tr key={contribution.id}>
+                      <td className="max-w-[300px] font-medium">{contribution.description}</td>
+                      <td>{contribution.contributor_label}</td>
+                      <td>
+                        <StatusBadge status={contribution.status} sample={contribution.is_demo} />
+                      </td>
+                      <td className="capitalize">{contribution.final_impact ?? "n/a"}</td>
+                      <td className="font-mono text-xs text-ledger-muted">
+                        {contribution.evidence_hash?.slice(0, 16) ?? "pending"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="text-ledger-muted">No confirmed contributions yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+
+        <Panel title="Evidence integrity" className="bg-ledger-panel/70">
+          <div className="grid gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-plum-700">Hash receipt</p>
+              <p className="mt-2 text-sm leading-6 text-ledger-muted">
+                Confirmed and partial records receive a server-side Evidence Hash for tamper-evident review.
+              </p>
+            </div>
+            <div className="rounded-md border border-ledger-line bg-white p-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-ledger-muted">Latest receipt</p>
+              <p className="mt-2 break-all font-mono text-xs leading-5 text-ledger-ink">
+                {latestEvidenceHash ? `${latestEvidenceHash.slice(0, 24)}…` : "No confirmed hash yet"}
+              </p>
+            </div>
+            <p className="text-xs leading-5 text-ledger-muted">
+              Evidence receipts appear after peer confirmation and remain available for later review.
+            </p>
+          </div>
+        </Panel>
+      </div>
     </PageShell>
   );
 }

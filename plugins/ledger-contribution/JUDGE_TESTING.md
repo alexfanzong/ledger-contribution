@@ -4,7 +4,7 @@ These cases exercise the installed bundle without requiring an OpenAI API key. R
 
 Repository maintainers should run `npm run mcp:test` before publishing. It rebuilds the standalone bundle, copies the plugin into an isolated temporary install directory, then verifies all three tools over stdio plus the optional stateless `/mcp` HTTP transport. Judges using the installed plugin can begin directly with the interactive cases below.
 
-For the fastest reviewer-facing demo, use `skills/ledger-contribution-pack/references/judge-pack.fixture.json`. Create a project named **Ledger Build Week Demo** while signed in as a member whose display name is **Alex Rivera**. The three claims intentionally produce `Agent Verified`, `Needs Review`, and `Insufficient Evidence` in that order.
+For the fastest reviewer-facing demo, use `skills/ledger-contribution-pack/references/judge-pack.fixture.json`. Create a project named **Ledger Build Week Demo** while signed in as a member whose display name is **Alex Fan**. The three claims intentionally produce `Agent Verified`, `Needs Review`, and `Insufficient Evidence` in that order.
 
 ## Five positive cases
 

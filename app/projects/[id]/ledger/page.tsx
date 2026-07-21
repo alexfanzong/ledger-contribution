@@ -120,7 +120,7 @@ export default async function LedgerPage({
               </select>
             </Field>
             <SubmitButton
-              className="focus-ring min-h-10 rounded-md bg-ink px-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+              className="focus-ring min-h-10 rounded-md bg-plum-700 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-800 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!currentMember}
               pendingLabel="Submitting..."
             >
@@ -134,9 +134,9 @@ export default async function LedgerPage({
 
         <Panel title="Ledger">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1080px] border-collapse text-sm">
+            <table className="ledger-table min-w-[1080px]">
               <thead>
-                <tr className="border-b border-line text-left text-muted">
+                <tr>
                   <th className="py-2 pr-3">Contribution</th>
                   <th className="py-2 pr-3">Contributor</th>
                   <th className="py-2 pr-3">Category</th>

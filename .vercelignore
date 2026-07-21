@@ -1,0 +1,29 @@
+.git
+.next
+node_modules
+.env
+.env*.local
+!.env.example
+dist
+coverage
+*.tsbuildinfo
+.DS_Store
+
+# Local-only evidence and internal product material.
+.private/
+private/
+docs/internal/
+AGENTS.md
+PRD-*.md
+codex-brief-*.md
+LEDGER_OPENAI_BUILD_WEEK_PROJECT_BRIEF.md
+docs/claude-review-prompt.md
+docs/validation-run-*.md
+docs/superpowers/
+design-qa.md
+
+# Generated contribution packs may contain private team evidence.
+ledger-contribution-pack.json
+
+# Local validation screenshots may expose test account details.
+测试截图/

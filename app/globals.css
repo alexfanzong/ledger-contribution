@@ -47,6 +47,30 @@ textarea {
   outline-color: #6d0f5b;
 }
 
+.ledger-table {
+  @apply w-full border-collapse text-sm;
+}
+
+.ledger-table thead tr {
+  @apply border-b border-ledger-line;
+}
+
+.ledger-table th {
+  @apply px-3 py-2 text-left text-[10px] font-bold uppercase tracking-[0.14em] text-ledger-muted;
+}
+
+.ledger-table td {
+  @apply border-b border-ledger-line px-3 py-3 align-top text-ledger-ink;
+}
+
+.ledger-table tbody tr {
+  @apply transition-colors hover:bg-ledger-panel/60;
+}
+
+.ledger-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
 html {
   scroll-behavior: smooth;
 }

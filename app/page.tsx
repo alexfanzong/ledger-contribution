@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Bot, FileText, ShieldCheck, Users } from "lucide-react";
 
 import { HomeEvidenceDesk } from "@/components/home-evidence-desk";
 import { BrandMark } from "@/components/brand-mark";
-import { HOME_WORKFLOW_STAGES, getHomePrimaryAction } from "@/lib/homepage";
+import { getHomePrimaryAction } from "@/lib/homepage";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +19,6 @@ export default async function HomePage() {
   }
 
   const primaryAction = getHomePrimaryAction(signedIn);
-  const workflowIcons = [FileText, FileText, Bot, Users] as const;
 
   return (
     <main className="overflow-x-clip bg-ledger-canvas text-ledger-ink">
@@ -34,9 +32,6 @@ export default async function HomePage() {
           <nav className="hidden items-center gap-12 text-sm font-medium lg:flex" aria-label="Primary">
             <a className="focus-ring hover:text-plum-700" href="#product">
               Product
-            </a>
-            <a className="focus-ring hover:text-plum-700" href="#workflow">
-              How it works
             </a>
             <a className="focus-ring hover:text-plum-700" href="#security">
               Security
@@ -80,53 +75,10 @@ export default async function HomePage() {
             >
               {primaryAction.label}
             </Link>
-            <a
-              className="focus-ring inline-flex min-h-12 items-center gap-3 px-2 text-sm font-semibold text-plum-800 hover:text-plum-950"
-              href="#workflow"
-            >
-              See the workflow
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </a>
           </div>
         </div>
 
         <HomeEvidenceDesk />
-      </section>
-
-      <section id="workflow" className="mx-auto max-w-[1440px] px-5 pt-2.5 md:px-8 xl:px-9">
-        <div className="grid overflow-hidden rounded-xl border border-ledger-line bg-white shadow-sm sm:grid-cols-2 xl:grid-cols-4">
-          {HOME_WORKFLOW_STAGES.map((stage, index) => {
-            const Icon = workflowIcons[index];
-            return (
-              <div
-                key={stage.label}
-                className="relative flex gap-4 border-b border-ledger-line p-4 last:border-b-0 sm:[&:nth-child(odd)]:border-r xl:border-b-0 xl:border-r xl:last:border-r-0"
-              >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-periwinkle-100 text-xs font-semibold text-indigo-700">
-                  {index + 1}
-                </span>
-                <Icon className="mt-1 h-5 w-5 shrink-0 text-ledger-ink" aria-hidden="true" />
-                <div>
-                  <h2 className="text-sm font-semibold text-ledger-ink">{stage.label}</h2>
-                  <p className="mt-1 text-xs leading-5 text-ledger-muted">{stage.description}</p>
-                </div>
-                {index < HOME_WORKFLOW_STAGES.length - 1 ? (
-                  <ArrowRight
-                    className="absolute -right-2 top-1/2 z-10 hidden h-4 w-4 -translate-y-1/2 text-plum-400 xl:block"
-                    aria-hidden="true"
-                  />
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="px-5 py-2 md:px-8" aria-label="Trust statement">
-        <p className="mx-auto flex max-w-[1440px] items-center justify-center gap-3 text-sm font-medium text-ledger-ink">
-          <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-          No wallet. No token flow. No automated equity decisions.
-        </p>
       </section>
     </main>
   );

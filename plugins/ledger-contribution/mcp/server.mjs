@@ -32818,7 +32818,9 @@ function createFixedWindowRateLimiter({
 
 // mcp/server.ts
 var SERVER_NAME = "ledger-contribution";
-var SERVER_VERSION = "0.2.0";
+var SERVER_VERSION = "0.2.1";
+var SERVER_WEBSITE_URL = "https://github.com/alexfanzong/ledger-contribution";
+var SERVER_ICON_URL = "https://raw.githubusercontent.com/alexfanzong/ledger-contribution/main/plugins/ledger-contribution/assets/mcp-icon.png";
 var MCP_PATH = "/mcp";
 var httpRateLimiter = createFixedWindowRateLimiter({
   limit: 120,
@@ -32835,7 +32837,18 @@ function toolResponse(structuredContent, message) {
 }
 function createLedgerMcpServer() {
   const server = new McpServer(
-    { name: SERVER_NAME, version: SERVER_VERSION },
+    {
+      name: SERVER_NAME,
+      version: SERVER_VERSION,
+      websiteUrl: SERVER_WEBSITE_URL,
+      icons: [
+        {
+          src: SERVER_ICON_URL,
+          mimeType: "image/png",
+          sizes: ["256x256"]
+        }
+      ]
+    },
     {
       instructions: "Validate a Contribution Pack before pre-verifying it. All Ledger MCP tools are read-only and deterministic. PM Agent results are advisory only: never describe them as human confirmation, legal ownership, equity, or an Evidence Hash. Final confirmation must be performed by a different authenticated teammate in Ledger."
     }
@@ -32947,6 +32960,14 @@ async function runHttpServer() {
         JSON.stringify({
           name: SERVER_NAME,
           version: SERVER_VERSION,
+          websiteUrl: SERVER_WEBSITE_URL,
+          icons: [
+            {
+              src: SERVER_ICON_URL,
+              mimeType: "image/png",
+              sizes: ["256x256"]
+            }
+          ],
           mcp_endpoint: MCP_PATH,
           authentication: "none-demo",
           writes_data: false

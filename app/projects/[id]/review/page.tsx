@@ -68,7 +68,7 @@ export default async function ReviewPage({
       <ActionNotice error={query.error} />
       <Panel title="Pending Review">
         {hiddenCount > 0 ? (
-          <p className="mb-3 rounded-md border border-line bg-panel p-3 text-sm text-muted">
+          <p className="mb-3 rounded-md border border-ledger-line bg-ledger-panel p-3 text-sm text-ledger-muted">
             {hiddenCount} pending record{hiddenCount === 1 ? "" : "s"} are hidden because contributors and
             agent owners cannot confirm their own work.
           </p>
@@ -92,7 +92,7 @@ export default async function ReviewPage({
                     </p>
                     {contribution.evidence_url ? (
                       <a
-                        className="text-sm font-medium text-accent"
+                    className="text-sm font-semibold text-plum-700 hover:text-plum-800"
                         href={contribution.evidence_url}
                         target="_blank"
                         rel="noreferrer"
@@ -115,7 +115,7 @@ export default async function ReviewPage({
                     verification={latestVerificationByContribution.get(contribution.id)!}
                   />
                 ) : contribution.import_pack_id ? (
-                  <p className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-muted">
+                  <p className="rounded-md border border-ledger-line bg-ledger-panel p-3 text-sm text-ledger-muted">
                     Demo PM Agent assessment is unavailable. Peer confirmation can still continue.
                   </p>
                 ) : null}
@@ -143,7 +143,7 @@ export default async function ReviewPage({
                     <input className={inputClass} name="review_note" />
                   </Field>
                   <SubmitButton
-                    className="focus-ring mt-6 min-h-10 rounded-md bg-ink px-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+                    className="focus-ring mt-6 min-h-10 rounded-md bg-plum-700 px-3 text-sm font-semibold text-white shadow-sm transition hover:bg-plum-800 disabled:cursor-not-allowed disabled:opacity-50"
                     pendingLabel="Submitting..."
                   >
                     Submit
