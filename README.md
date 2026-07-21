@@ -168,16 +168,6 @@ npm run build
 
 The current suite covers pack parsing, actor validation, provenance projection, claim preparation, PM Agent policy, defensive row parsing, scoring, superseding records, redirect safety, retry conflicts, and static migration contracts. The SQL contract tests inspect migration text; they do not replace applying the migrations to a real Supabase database and running the negative RLS/RPC checks in [`docs/testing.md`](docs/testing.md). The plugin also ships valid and invalid fixtures for a deterministic test that does not require rebuilding the web app. See [`JUDGE_TESTING.md`](plugins/ledger-contribution/JUDGE_TESTING.md).
 
-## Repository layout
-
-```text
-plugins/ledger-contribution/  Codex plugin, Skill, fixtures, and validator
-app/projects/[id]/import/     Contribution Pack preview and import flow
-lib/imports/                  Dependency-free parsing and validation
-supabase/migrations/          RLS, review, immutability, hashing, and import RPCs
-docs/                         Build Week boundary and public test instructions
-```
-
 ## Legal scope
 
 Ledger records contributions and produces non-binding discussion weights. It does not create, transfer, or determine equity, compensation, tokens, or other legal rights. Teams need separate legal documents and professional advice for any binding allocation.

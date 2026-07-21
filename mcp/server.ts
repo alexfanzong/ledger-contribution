@@ -20,7 +20,7 @@ const SERVER_NAME = "ledger-contribution";
 const SERVER_VERSION = "0.2.1";
 const SERVER_WEBSITE_URL = "https://github.com/alexfanzong/ledger-contribution";
 const SERVER_ICON_URL =
-  "https://raw.githubusercontent.com/alexfanzong/ledger-contribution/codex/openai-build-week-contribution-import/plugins/ledger-contribution/assets/mcp-icon.png";
+  "https://raw.githubusercontent.com/alexfanzong/ledger-contribution/main/plugins/ledger-contribution/assets/mcp-icon.png";
 const MCP_PATH = "/mcp";
 const httpRateLimiter = createFixedWindowRateLimiter({
   limit: 120,

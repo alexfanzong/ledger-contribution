@@ -32820,7 +32820,7 @@ function createFixedWindowRateLimiter({
 var SERVER_NAME = "ledger-contribution";
 var SERVER_VERSION = "0.2.1";
 var SERVER_WEBSITE_URL = "https://github.com/alexfanzong/ledger-contribution";
-var SERVER_ICON_URL = "https://raw.githubusercontent.com/alexfanzong/ledger-contribution/codex/openai-build-week-contribution-import/plugins/ledger-contribution/assets/mcp-icon.png";
+var SERVER_ICON_URL = "https://raw.githubusercontent.com/alexfanzong/ledger-contribution/main/plugins/ledger-contribution/assets/mcp-icon.png";
 var MCP_PATH = "/mcp";
 var httpRateLimiter = createFixedWindowRateLimiter({
   limit: 120,
